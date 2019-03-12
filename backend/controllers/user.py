@@ -12,7 +12,8 @@ user_api = Blueprint('user_api', __name__)
 def create_user():
     try:
         # VALIDATE REQUEST'S HEADERS, BODY
-        validate_request_header(request, content=True, authorization=False)
+        # validate_request_header(request, content=True, authorization=False)
+        validate_header_content_type_json(request)
         validated_request_body = validate_request_body(request, action='create', resource='user')
 
         # CREATE USER
@@ -22,34 +23,28 @@ def create_user():
         # SUCCEED, RETURN MESSAGE
         return jsonify({'message': 'User created successfully'}), 201
 
-    except BadRequestError as err:
-        return jsonify(err.represent()), 400
+    except AppError as err:
+        return jsonify(err.represent()), err.status_code
 
 
 # retrieve jwt
 @user_api.route('/auth', methods=['POST'])
 def authenticate_user():
-    # use generic error message for security
-    error_message = 'Invalid action'
-    status_code = 400
-
-    # VALIDATE REQUEST'S HEADERS
     try:
-        validate_request_header(request, content=True, authorization=False)
-    except BadRequestError as err:
-        return jsonify(err.represent()), 400
+        # VALIDATE REQUEST'S HEADERS
+        # validate_request_header(request, content=True, authorization=False)
+        validate_header_content_type_json(request)
 
-    # VALIDATE REQUEST'S BODY AND AUTHENTICATE USER
-    try:
+        # VALIDATE REQUEST'S BODY AND AUTHENTICATE USER
         # validate request's body
         validated_request_body = validate_request_body(request, action='auth', resource='user')
         # authenticate
         auth_output = authenticate(**validated_request_body)
         # successfully authenticate user, return token
-        return jsonify({'token': auth_output})
+        return jsonify({'access_token': auth_output})
 
-    except Exception:
-        return jsonify({'message': error_message}), status_code
+    except AppError as err:
+        return jsonify(err.represent()), err.status_code
 
 
 # update password, only author can perform
@@ -59,30 +54,27 @@ def update_user(user_id):
     error_message = 'Invalid action'
     status_code = 400
 
-    # VALIDATE REQUEST HEADER
     try:
-        token = validate_request_header(request, content=True, authorization=True)
-    except BadRequestError as err:
-        return jsonify(err.represent()), 400
+        # VALIDATE REQUEST HEADER
+        # token = validate_request_header(request, content=True, authorization=True)
+        validate_header_content_type_json(request)
+        token = validate_header_authorization(request)
 
-    try:
-        # VALIDATE TOKEN, REQUEST'S BODY
-        user_from_token = identity(token)  # validate request's token
+        # VALIDATE REQUEST'S BODY
+        # user_from_token = user_from_token(token)  # validate request's token
         validated_request_body = validate_request_body(request, resource_id=user_id, resource='user', action='update')
 
         # AUTHORIZE USER
         user_from_request = UserModel.find_by_id(user_id)
-        if user_from_request.id != user_from_token.id:
+        if user_from_request.id != user_from_token(token).id:
             return jsonify({'message': error_message}), status_code
 
         # UPDATE USER
         user_from_request.password = validated_request_body['password']
         user_from_request.save_to_db()
 
-    except BadRequestError:
-        return jsonify({'message': error_message}), status_code
-    except UnauthorizedError:
-        return jsonify({'message': error_message}), status_code
+    except AppError as err:
+        return jsonify(err.represent()), err.status_code
 
-    # SUCCEED, RETURN UPDATED USER
+    # SUCCEED, RETURN MESSAGE
     return jsonify({'message': 'User updated successfully'}), 200

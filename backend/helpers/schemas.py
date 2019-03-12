@@ -5,8 +5,12 @@ class ItemSchema(Schema):
     id = fields.Int()
     name = fields.Str(required=True, allow_none=False, validate=validate.Length(min=1))
     description = fields.Str(required=True, allow_none=False)
-    category_id = fields.Int(required=True, allow_none=False)
+    category_id = fields.Int()
     author_id = fields.Int()
+
+
+class CreateItemSchema(Schema):
+    pass
 
 
 class CategorySchema(Schema):

@@ -9,17 +9,25 @@ class AppError(Exception):
         return response
 
 
-class UnauthorizedError(AppError):
-    pass
-
-
 class BadRequestError(AppError):
-    pass
+    def __init__(self, message):
+        AppError.__init__(self, message)
+        self.status_code = 400
+
+
+class UnauthorizedError(AppError):
+    def __init__(self, message):
+        AppError.__init__(self, message)
+        self.status_code = 401
 
 
 class NotFoundError(AppError):
-    pass
+    def __init__(self, message):
+        AppError.__init__(self, message)
+        self.status_code = 403
 
 
 class InternalError(AppError):
-    pass
+    def __init__(self, message):
+        AppError.__init__(self, message)
+        self.status_code = 404

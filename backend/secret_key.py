@@ -1,1 +1,1 @@
-SECRET_KEY = 'change_this_please'
+JWT_SECRET_KEY = 'change_this_please'

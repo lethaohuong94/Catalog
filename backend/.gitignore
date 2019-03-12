@@ -1,0 +1,8 @@
+# virtual environment
+venv/
+
+# python
+**/__pycache__
+**/__init__.py
+**/.idea/
+**/.DS_Store

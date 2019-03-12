@@ -35,8 +35,10 @@ def get_category(category_id):
 def create_category():
     try:
         # VALIDATE REQUEST'S HEADERS, TOKEN, BODY
-        token = validate_request_header(request, content=True, authorization=True)
-        user = identity(token)  # validate request's token
+        # token = validate_request_header(request, content=True, authorization=True)
+        validate_header_content_type_json(requets)
+        token = validate_header_authorization(request)
+        user = user_from_token(token)  # validate request's token
         validated_request_body = validate_request_body(request, action='create', resource='category')
 
         # CREATE CATEGORY
@@ -46,12 +48,8 @@ def create_category():
         # SUCCEED, RETURN CREATED CATEGORY
         return jsonify(category.represent()), 201
 
-    except BadRequestError as err:
-        return jsonify(err.represent()), 400
-    except UnauthorizedError as err:
-        return jsonify(err.represent()), 401
-    except NotFoundError as err:
-        return jsonify(err.represent()), 404
+    except AppError as err:
+        return jsonify(err.represent()), err.status_code
 
 
 # update category name, jwt required, only author can perform
@@ -59,8 +57,10 @@ def create_category():
 def update_category(category_id):
     try:
         # VALIDATE REQUEST HEADER, BODY, TOKEN
-        token = validate_request_header(request, content=True, authorization=True)
-        user = identity(token)  # validate request's token
+        # token = validate_request_header(request, content=True, authorization=True)
+        validate_header_content_type_json(requets)
+        token = validate_header_authorization(request)
+        user = user_from_token(token)  # validate request's token
         validated_request_body = validate_request_body(request, action='update',
                                                        resource_id=category_id, resource='category')
 
@@ -76,12 +76,8 @@ def update_category(category_id):
         # SUCCEED, RETURN UPDATED CATEGORY
         return jsonify(category.represent()), 200
 
-    except BadRequestError as err:
-        return jsonify(err.represent()), 400
-    except UnauthorizedError as err:
-        return jsonify(err.represent()), 401
-    except NotFoundError as err:
-        return jsonify(err.represent()), 404
+    except AppError as err:
+        return jsonify(err.represent()), err.status_code
 
 
 # delete category, jwt required, only author can perform
@@ -89,8 +85,9 @@ def update_category(category_id):
 def delete_category(category_id):
     try:
         # VALIDATE REQUEST HEADER, TOKEN
-        token = validate_request_header(request, content=False, authorization=True)
-        user = identity(token)  # validate request's token
+        # token = validate_request_header(request, content=False, authorization=True)
+        token = validate_header_authorization(request)
+        user = user_from_token(token)  # validate request's token
 
         # VALIDATE CATEGORY_ID
         category = CategoryModel.find_by_id(category_id)
@@ -111,9 +108,5 @@ def delete_category(category_id):
         # SUCCEED, RETURN MESSAGE
         return jsonify({'message': 'Category deleted'}), 200
 
-    except BadRequestError as err:
-        return jsonify(err.represent()), 400
-    except UnauthorizedError as err:
-        return jsonify(err.represent()), 401
-    except NotFoundError as err:
-        return jsonify(err.represent()), 404
+    except AppError as err:
+        return jsonify(err.represent()), err.status_code
