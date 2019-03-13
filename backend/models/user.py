@@ -27,6 +27,7 @@ class UserModel(db.Model):
         self.name = name
         self.set_password(password)
 
+    # Password is hashed before saved into db.
     def set_password(self, password):
         self.pw_hash = generate_password_hash(password, salt_length=1)
 

@@ -48,8 +48,8 @@ Edit the config file according to your working environment
 DEFAULT_CATEGORY is the name of your default category that hold all items that don't belong to any category, please change it if you wish, but it can't be None    
 
 3.
-Inside the folder backend/ is a file secret_key.py.   
-This file hold the secret key used to decode your data.   
+Inside the configuration objects is JWT_SECRET_KEY field.  
+This field hold the secret key used to encode and decode your data.   
 Please change it accordingly, but do NOT post it anywhere or give it to anyone.   
 
 4.

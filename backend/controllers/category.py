@@ -24,10 +24,9 @@ def get_all_categories():
 def get_category(category_id):
     try:
         category = CategoryModel.find_by_id(category_id)
-
         if not category:
             raise NotFoundError('No category found')
-
+        # If category exists then it is returned.
         return jsonify(dump_schema().dump(category).data)
 
     except AppError as err:
@@ -38,15 +37,15 @@ def get_category(category_id):
 @header_content_type_json_required
 def create_category():
     try:
+        # Validate access token and extract author (user object) from the token.
         token = get_token_from_header(request)
         author = get_user_from_token(token)
-
+        # Request body is validated using resource='category' and action='create'.
         validated_data = get_data_from_request(request, resource='category')
         validated_data['author_id'] = author.id
         category = get_created_object_from_data(validated_data, 'category')
-
+        # If category is created successfully then it is saved and returned.
         category.save_to_db()
-
         return jsonify(dump_schema().dump(category).data), 201
 
     except AppError as err:
@@ -58,19 +57,19 @@ def create_category():
 @header_content_type_json_required
 def update_category(category_id):
     try:
+        # Validate access token and extract user from the token.
         token = get_token_from_header(request)
         user = get_user_from_token(token)
-
+        # Request body is validated using resource='category' and action='update'.
         validated_data = get_data_from_request(request, resource='category')
         validated_data['id'] = category_id
         category = get_object_to_update_from_data(validated_data, resource='category')
-
+        # If user is not the creator of category then returns unauthorized error.
         if user.id != category.author_id:
             raise UnauthorizedError('Unauthorized action')
-
+        # Request is valid. Category is updated, saved, and returned.
         category.update(validated_data)
         category.save_to_db()
-
         return jsonify(dump_schema().dump(category).data)
 
     except AppError as err:
@@ -81,22 +80,23 @@ def update_category(category_id):
 @header_authorization_required
 def delete_category(category_id):
     try:
+        # Validate access token and extract user from the token.
         token = get_token_from_header(request)
         user = get_user_from_token(token)
-
+        # If the requested category doesn't exist then return 404 error.
         category = CategoryModel.find_by_id(category_id)
         if category is None:
             raise NotFoundError('No category found')
-
+        # If user is not the creator of the category then returns unauthorized error.
         if user.id != category.author_id:
             raise UnauthorizedError('Unauthorized action')
-
+        # Before the category is deleted, all items it contains is moved to default category.
         default_category = CategoryModel.find_by_name(current_app.config['DEFAULT_CATEGORY'])
         for item in category.items:
             item.category_id = default_category.id
             item.save_to_db()
+        # If the action is valid, category is deleted. Succeed message is returned.
         category.delete_from_db()
-
         return jsonify({'message': 'Category deleted'})
 
     except AppError as err:
