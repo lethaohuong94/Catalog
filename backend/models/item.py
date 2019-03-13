@@ -1,4 +1,5 @@
 from marshmallow import Schema, fields
+from sqlalchemy.exc import IntegrityError
 
 from db import db
 from helpers.schemas import *
@@ -26,21 +27,28 @@ class ItemModel(db.Model):
     def find_by_id(cls, item_id):
         return cls.query.filter_by(id=item_id).first()
 
+    @classmethod
+    def get_all(cls):
+        return cls.query.all()
+
     def __init__(self, name, description, category_id, author_id):
         self.name = name
         self.description = description
         self.category_id = category_id
         self.author_id = author_id
 
-    def represent(self):
-        schema = ItemSchema()
-        return schema.dump(self).data
+    def update(self, data):
+        self.name = data['name']
+        self.description = data['description']
+        self.category_id = data['category_id']
 
     def save_to_db(self):
         try:
             db.session.add(self)
             db.session.commit()
-        # except IntegrityError:
+        except IntegrityError:
+            raise BadRequestError('Failed to save item. Possible cause: category does not exist')
+            db.session.rollback()
         except Exception:
             raise BadRequestError('Failed to save item')
             db.session.rollback()
@@ -49,7 +57,6 @@ class ItemModel(db.Model):
         try:
             db.session.delete(self)
             db.session.commit()
-        # except IntegrityError:
         except Exception:
             raise BadRequestError('Failed to delete item')
             db.session.rollback()

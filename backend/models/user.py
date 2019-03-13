@@ -1,5 +1,4 @@
-from sqlalchemy.exc import IntegrityError
-from werkzeug.security import safe_str_cmp
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from db import db
 from helpers.schemas import *
@@ -11,7 +10,7 @@ class UserModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
-    password = db.Column(db.String(20))
+    pw_hash = db.Column(db.String(100))
 
     categories = db.relationship('CategoryModel')
     items = db.relationship('ItemModel')
@@ -26,23 +25,21 @@ class UserModel(db.Model):
 
     def __init__(self, name, password):
         self.name = name
-        self.password = password
+        self.set_password(password)
 
-    def represent(self):
-        # exclude password from out put
-        schema = UserSchema(exclude=['password'])
-        return schema.dump(self).data
+    def set_password(self, password):
+        self.pw_hash = generate_password_hash(password, salt_length=1)
+
+    def update(self, data):
+        self.set_password(data['password'])
 
     def check_password(self, password):
-        if safe_str_cmp(self.password, password):
-            return True
-        else:
-            return False
+        return check_password_hash(self.pw_hash, password)
 
     def save_to_db(self):
         try:
             db.session.add(self)
             db.session.commit()
-        except IntegrityError:
+        except Exception:
             raise BadRequestUser('Failed to save user')
             db.session.rollback()

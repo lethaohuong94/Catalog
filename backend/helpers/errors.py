@@ -3,11 +3,6 @@ class AppError(Exception):
         Exception.__init__(self)
         self.message = message
 
-    def represent(self):
-        response = dict()
-        response['message'] = self.message
-        return response
-
 
 class BadRequestError(AppError):
     def __init__(self, message):
@@ -24,10 +19,10 @@ class UnauthorizedError(AppError):
 class NotFoundError(AppError):
     def __init__(self, message):
         AppError.__init__(self, message)
-        self.status_code = 403
+        self.status_code = 404
 
 
 class InternalError(AppError):
     def __init__(self, message):
         AppError.__init__(self, message)
-        self.status_code = 404
+        self.status_code = 500

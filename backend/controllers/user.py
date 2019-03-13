@@ -9,72 +9,63 @@ user_api = Blueprint('user_api', __name__)
 
 
 @user_api.route('/users', methods=['POST'])
+@header_content_type_json_required
 def create_user():
     try:
-        # VALIDATE REQUEST'S HEADERS, BODY
-        # validate_request_header(request, content=True, authorization=False)
-        validate_header_content_type_json(request)
-        validated_request_body = validate_request_body(request, action='create', resource='user')
+        validated_data = get_data_from_request(request, 'user')
+        user = UserModel.find_by_name(validated_data['name'])
+        if user is not None:
+            raise BadRequestError('user already exists')
 
-        # CREATE USER
-        user = UserModel(**validated_request_body)
+        user = UserModel(**validated_data)
+
         user.save_to_db()
 
-        # SUCCEED, RETURN MESSAGE
-        return jsonify({'message': 'User created successfully'}), 201
+        return jsonify({'message': 'user created successfully'}), 201
 
     except AppError as err:
-        return jsonify(err.represent()), err.status_code
+        return jsonify({'message': err.message}), err.status_code
 
 
-# retrieve jwt
 @user_api.route('/auth', methods=['POST'])
+@header_content_type_json_required
 def authenticate_user():
     try:
-        # VALIDATE REQUEST'S HEADERS
-        # validate_request_header(request, content=True, authorization=False)
-        validate_header_content_type_json(request)
+        validated_data = get_data_from_request(request, resource='user')
 
-        # VALIDATE REQUEST'S BODY AND AUTHENTICATE USER
-        # validate request's body
-        validated_request_body = validate_request_body(request, action='auth', resource='user')
-        # authenticate
-        auth_output = authenticate(**validated_request_body)
-        # successfully authenticate user, return token
-        return jsonify({'access_token': auth_output})
+        user = UserModel.find_by_name(validated_data['name'])
+        if user is None:
+            raise UnauthorizedError('Invalid username/password')
+
+        if not user.check_password(validated_data['password']):
+            raise UnauthorizedError('Invalid username/password')
+
+        access_token = encode(user)
+        return jsonify({'access_token': access_token})
 
     except AppError as err:
-        return jsonify(err.represent()), err.status_code
+        return jsonify({'message': err.message}), err.status_code
 
 
-# update password, only author can perform
 @user_api.route('/users/<int:user_id>', methods=['PUT'])
+@header_authorization_required
+@header_content_type_json_required
 def update_user(user_id):
-    # use generic error for security
-    error_message = 'Invalid action'
-    status_code = 400
-
     try:
-        # VALIDATE REQUEST HEADER
-        # token = validate_request_header(request, content=True, authorization=True)
-        validate_header_content_type_json(request)
-        token = validate_header_authorization(request)
+        token = get_token_from_header(request)
+        validated_data = get_data_from_request(request, resource='user')
 
-        # VALIDATE REQUEST'S BODY
-        # user_from_token = user_from_token(token)  # validate request's token
-        validated_request_body = validate_request_body(request, resource_id=user_id, resource='user', action='update')
-
-        # AUTHORIZE USER
         user_from_request = UserModel.find_by_id(user_id)
-        if user_from_request.id != user_from_token(token).id:
-            return jsonify({'message': error_message}), status_code
+        if user_from_request is None:
+            raise NotFoundError('No user found')
 
-        # UPDATE USER
-        user_from_request.password = validated_request_body['password']
+        if user_from_request.id != get_user_from_token(token).id:
+            raise UnauthorizedError('Unauthorized action')
+
+        user_from_request.update(validated_data)
         user_from_request.save_to_db()
 
     except AppError as err:
-        return jsonify(err.represent()), err.status_code
+        return jsonify({'message': err.message}), err.status_code
 
-    # SUCCEED, RETURN MESSAGE
-    return jsonify({'message': 'User updated successfully'}), 200
+    return jsonify({'message': 'User updated successfully'})

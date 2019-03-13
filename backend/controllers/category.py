@@ -4,8 +4,10 @@ from models.category import CategoryModel
 from helpers.errors import *
 from helpers.validators import *
 from helpers.security import *
+from helpers.schemas import CategoryDumpSchema
 
 category_api = Blueprint('category_api', __name__)
+dump_schema = CategoryDumpSchema
 
 
 def add_default_category():
@@ -13,100 +15,89 @@ def add_default_category():
     default_category.save_to_db()
 
 
-# get all categories
 @category_api.route('/categories', methods=['GET'])
 def get_all_categories():
-    return jsonify([category.represent() for category in CategoryModel.query.all()]), 200
+    return jsonify(dump_schema().dump(CategoryModel.get_all(), many=True).data)
 
 
-# get category by id, jwt not required
 @category_api.route('/categories/<int:category_id>', methods=['GET'])
 def get_category(category_id):
-    category = CategoryModel.find_by_id(category_id)
-    # category found
-    if category:
-        return jsonify(category.represent())
-    # category not found
-    return jsonify({'message': 'No category found'}), 404
+    try:
+        category = CategoryModel.find_by_id(category_id)
+
+        if not category:
+            raise NotFoundError('No category found')
+
+        return jsonify(dump_schema().dump(category).data)
+
+    except AppError as err:
+        return jsonify({'message': err.message}), err.status_code
 
 
-# create category, jwt token required
 @category_api.route('/categories', methods=['POST'])
+@header_content_type_json_required
 def create_category():
     try:
-        # VALIDATE REQUEST'S HEADERS, TOKEN, BODY
-        # token = validate_request_header(request, content=True, authorization=True)
-        validate_header_content_type_json(requets)
-        token = validate_header_authorization(request)
-        user = user_from_token(token)  # validate request's token
-        validated_request_body = validate_request_body(request, action='create', resource='category')
+        token = get_token_from_header(request)
+        author = get_user_from_token(token)
 
-        # CREATE CATEGORY
-        category = CategoryModel(name=validated_request_body['name'], author_id=user.id)
+        validated_data = get_data_from_request(request, resource='category')
+        validated_data['author_id'] = author.id
+        category = get_created_object_from_data(validated_data, 'category')
+
         category.save_to_db()
 
-        # SUCCEED, RETURN CREATED CATEGORY
-        return jsonify(category.represent()), 201
+        return jsonify(dump_schema().dump(category).data), 201
 
     except AppError as err:
-        return jsonify(err.represent()), err.status_code
+        return jsonify({'message': err.message}), err.status_code
 
 
-# update category name, jwt required, only author can perform
 @category_api.route('/categories/<int:category_id>', methods=['PUT'])
+@header_authorization_required
+@header_content_type_json_required
 def update_category(category_id):
     try:
-        # VALIDATE REQUEST HEADER, BODY, TOKEN
-        # token = validate_request_header(request, content=True, authorization=True)
-        validate_header_content_type_json(requets)
-        token = validate_header_authorization(request)
-        user = user_from_token(token)  # validate request's token
-        validated_request_body = validate_request_body(request, action='update',
-                                                       resource_id=category_id, resource='category')
+        token = get_token_from_header(request)
+        user = get_user_from_token(token)
 
-        # AUTHORIZE USER
-        category = CategoryModel.find_by_id(category_id)
+        validated_data = get_data_from_request(request, resource='category')
+        validated_data['id'] = category_id
+        category = get_object_to_update_from_data(validated_data, resource='category')
+
         if user.id != category.author_id:
-            return jsonify({'message': 'Unauthorized action'}), 401
+            raise UnauthorizedError('Unauthorized action')
 
-        # UPDATE CATEGORY
-        category.name = validated_request_body['name']
+        category.update(validated_data)
         category.save_to_db()
 
-        # SUCCEED, RETURN UPDATED CATEGORY
-        return jsonify(category.represent()), 200
+        return jsonify(dump_schema().dump(category).data)
 
     except AppError as err:
-        return jsonify(err.represent()), err.status_code
+        return jsonify({'message': err.message}), err.status_code
 
 
-# delete category, jwt required, only author can perform
 @category_api.route('/categories/<int:category_id>', methods=['DELETE'])
+@header_authorization_required
 def delete_category(category_id):
     try:
-        # VALIDATE REQUEST HEADER, TOKEN
-        # token = validate_request_header(request, content=False, authorization=True)
-        token = validate_header_authorization(request)
-        user = user_from_token(token)  # validate request's token
+        token = get_token_from_header(request)
+        user = get_user_from_token(token)
 
-        # VALIDATE CATEGORY_ID
         category = CategoryModel.find_by_id(category_id)
         if category is None:
-            return jsonify({'message': 'No category found'}), 404
+            raise NotFoundError('No category found')
 
-        # AUTHORIZE USER
         if user.id != category.author_id:
-            return jsonify({'message': 'Unauthorized action'}), 401
+            raise UnauthorizedError('Unauthorized action')
 
-        # DELETE CATEGORY
         default_category = CategoryModel.find_by_name(current_app.config['DEFAULT_CATEGORY'])
         for item in category.items:
             item.category_id = default_category.id
-        item.save_to_db()
+            item.save_to_db()
         category.delete_from_db()
 
-        # SUCCEED, RETURN MESSAGE
-        return jsonify({'message': 'Category deleted'}), 200
+        return jsonify({'message': 'Category deleted'})
 
     except AppError as err:
-        return jsonify(err.represent()), err.status_code
+        return jsonify({'message': err.message}), err.status_code

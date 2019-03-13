@@ -4,98 +4,92 @@ from models.item import ItemModel
 from helpers.errors import *
 from helpers.validators import *
 from helpers.security import *
+from helpers.schemas import ItemDumpSchema
 
 item_api = Blueprint('item_api', __name__)
+dump_schema = ItemDumpSchema
 
 
 @item_api.route('/categories/all/items', methods=['GET'])
 def get_all_items():
-    return jsonify([item.represent() for item in ItemModel.query.all()])
+    return jsonify(dump_schema().dump(ItemModel.get_all(), many=True).data)
 
 
 @item_api.route('/categories/<int:category_id>/items/<int:item_id>', methods=['GET'])
-def get_item(item_id):
-    item = ItemModel.find_by_id(item_id)
-    if item:
-        return jsonify(item.represent())
-    return jsonify({'message': 'No item found'}), 404
+def get_item(item_id, category_id):
+    try:
+        item = ItemModel.find_by_id(item_id)
+        if not item:
+            raise NotFoundError('No item found')
+        return jsonify(dump_schema().dump(item).data)
+
+    except AppError as err:
+        return jsonify({'message': err.message}), err.status_code
 
 
 @item_api.route('/categories/<int:category_id>/items', methods=['POST'])
+@header_authorization_required
+@header_content_type_json_required
 def create_item(category_id):
     try:
-        # VALIDATE REQUEST'S HEADERS, TOKEN, BODY
-        # token = validate_request_header(request, content=True, authorization=True)
-        validate_header_content_type_json(requets)
-        token = validate_header_authorization(request)
-        user = user_from_token(token)  # validate request's token
-        validated_request_body = validate_request_body(request, action='create', resource='item')
+        token = get_token_from_header(request)
+        author = get_user_from_token(token)
 
-        # CREATE ITEM
-        validated_request_body['author_id'] = user.id
-        validated_request_body['category_id'] = category_id
-        item = ItemModel(**validated_request_body)
+        validated_data = get_data_from_request(request, resource='item')
+        validated_data.update([('category_id', category_id), ('author_id', author.id)])
+        item = get_created_object_from_data(validated_data, resource='item')
+
         item.save_to_db()
 
-        # SUCCEED, RETURN CREATED CATEGORY
-        return jsonify(item.represent()), 201
+        return jsonify(dump_schema().dump(item).data), 201
 
     except AppError as err:
-        return jsonify(err.represent()), err.status_code
+        return jsonify({'message': err.message}), err.status_code
 
 
 @item_api.route('/categories/<int:category_id>/items/<int:item_id>', methods=['PUT'])
-def update_item(item_id):
+@header_authorization_required
+@header_content_type_json_required
+def update_item(item_id, category_id):
     try:
-        # VALIDATE REQUEST'S HEADERS, TOKEN, BODY
-        # token = validate_request_header(request, content=True, authorization=True)
-        validate_header_content_type_json(requets)
-        token = validate_header_authorization(request)
-        user = user_from_token(token)  # validate request's token
-        validated_request_body = validate_request_body(request, action='update',
-                                                       resource_id=item_id, resource='item')
+        token = get_token_from_header(request)
+        author = get_user_from_token(token)
 
-        # AUTHORIZE USER
-        item = ItemModel.find_by_id(item_id)
-        if user.id != item.author_id:
+        validated_data = get_data_from_request(request, resource='item')
+
+        validated_data.update([('id', item_id), ('category_id', category_id), ('author_id', author.id)])
+        item = get_object_to_update_from_data(validated_data, resource='item')
+
+        if author.id != item.author_id:
             return jsonify({'message': 'Unauthorized action'}), 401
 
-        # UPDATE CATEGORY
-        item.name = validated_request_body['name']
-        item.description = validated_request_body['description']
-        item.category_id = validated_request_body['category_id']
+        item.update(validated_data)
         item.save_to_db()
 
-        # SUCCEED, RETURN UPDATED CATEGORY
-        return jsonify(item.represent()), 200
+        return jsonify(dump_schema().dump(item).data)
 
     except AppError as err:
-        return jsonify(err.represent()), err.status_code
+        return jsonify({'message': err.message}), err.status_code
 
 
 @item_api.route('/categories/<int:category_id>/items/<int:item_id>', methods=['DELETE'])
-def delete_item(item_id):
-    # VALIDATE REQUEST HEADER, TOKEN
+@header_authorization_required
+def delete_item(item_id, category_id):
     try:
-        # token = validate_request_header(request, content=False, authorization=True)
-        token = validate_header_authorization(request)
-        user = user_from_token(token)  # validate request's token
+        token = get_token_from_header(request)
+        user = get_user_from_token(token)
 
-        # VALIDATE ITEM_ID
         item = ItemModel.find_by_id(item_id)
         if item is None:
             return jsonify({'message': 'No item found'}), 404
 
-        # AUTHORIZE USER
         if user.id != item.author_id:
             return jsonify({'message': 'Unauthorized action'}), 401
 
-        # DELETE CATEGORY
         item.delete_from_db()
 
-        # SUCCEED, RETURN MESSAGE
-        return jsonify({'message': 'Item deleted'}), 200
+        return jsonify({'message': 'Item deleted'})
 
     except AppError as err:
-        return jsonify(err.represent()), err.status_code
+        return jsonify({'message': err.message}), err.status_code
 

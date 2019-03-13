@@ -14,8 +14,6 @@ class CategoryModel(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     author = db.relationship('UserModel')
 
-    # it will detect the many to one relationship here
-    # therefore will create a list of items
     items = db.relationship('ItemModel', lazy='dynamic')
 
     @classmethod
@@ -26,13 +24,16 @@ class CategoryModel(db.Model):
     def find_by_id(cls, category_id):
         return cls.query.filter_by(id=category_id).first()
 
+    @classmethod
+    def get_all(cls):
+        return cls.query.all()
+
     def __init__(self, name, author_id):
         self.name = name
         self.author_id = author_id
 
-    def represent(self):
-        schema = CategorySchema()
-        return schema.dump(self).data
+    def update(self, data):
+        self.name = data['name']
 
     def save_to_db(self):
         try:
