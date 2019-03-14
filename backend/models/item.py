@@ -2,7 +2,6 @@ from marshmallow import Schema, fields
 from sqlalchemy.exc import IntegrityError
 
 from db import db
-from helpers.schemas import *
 from helpers.errors import *
 
 

@@ -1,46 +1,27 @@
 from marshmallow import Schema, fields, validate
 
 
-class ItemLoadSchema(Schema):
+class ItemSchema(Schema):
     id = fields.Int()
-    name = fields.Str(required=True, allow_none=False, validate=validate.Length(min=1))
-    description = fields.Str(required=True, allow_none=False)
+    name = fields.Str(required=True, validate=validate.Length(min=1))
+    description = fields.Str(required=True)
+    author_id = fields.Int()
     category_id = fields.Int()
-    author_id = fields.Int()
 
 
-class ItemDumpSchema(Schema):
-    id = fields.Int(required=True)
-    name = fields.Str(required=True, allow_none=False, validate=validate.Length(min=1))
-    description = fields.Str()
-    category_id = fields.Int()
-    author_id = fields.Int()
-
-
-class CategoryLoadSchema(Schema):
+class CategorySchema(Schema):
     id = fields.Int()
-    name = fields.Str(required=True, allow_none=False, validate=validate.Length(min=1))
+    name = fields.Str(required=True, validate=validate.Length(min=1))
     author_id = fields.Int()
-    items = fields.Nested(ItemLoadSchema, only=('id', 'name', 'description'), many=True)
+    items = fields.Nested(ItemSchema, only=('id', 'name', 'description'), many=True)
 
 
-class CategoryDumpSchema(Schema):
-    id = fields.Int(required=True)
-    name = fields.Str(required=True, allow_none=False, validate=validate.Length(min=1))
-    author_id = fields.Int()
-    items = fields.Nested(ItemDumpSchema, only=('id', 'name', 'description'), many=True)
-
-
-class UserLoadSchema(Schema):
+class UserSchema(Schema):
     id = fields.Int()
-    name = fields.Str(required=True, allow_none=False, validate=validate.Length(min=1))
-    password = fields.Str(required=True, allow_none=False, validate=validate.Length(min=1))
-    categories = fields.Nested(CategoryLoadSchema, many=True)
-    items = fields.Nested(ItemLoadSchema, many=True)
+    name = fields.Str(required=True, validate=validate.Length(min=1))
+    password = fields.Str(required=True, validate=validate.Length(min=1), load_only=True)
+    categories = fields.Nested(CategorySchema, only=['name'], many=True)
+    items = fields.Nested(ItemSchema, only=['name'], many=True)
 
-
-class UserDumpSchema(Schema):
-    id = fields.Int(required=True)
-    name = fields.Str(required=True, allow_none=False, validate=validate.Length(min=1))
-    categories = fields.Nested(CategoryDumpSchema, only=['name'], many=True)
-    items = fields.Nested(ItemDumpSchema, only=['name'], many=True)
+    class Meta:
+        fields = ('id', 'name')

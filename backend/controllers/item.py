@@ -3,93 +3,80 @@ from flask import request, Blueprint, jsonify
 from models.item import ItemModel
 from helpers.errors import *
 from helpers.validators import *
-from helpers.security import *
-from helpers.schemas import ItemDumpSchema
+from helpers.schemas import ItemSchema
 
 item_api = Blueprint('item_api', __name__)
-dump_schema = ItemDumpSchema
+load_schema = ItemSchema
+dump_schema = ItemSchema
 
 
-@item_api.route('/categories/all/items', methods=['GET'])
+@item_api.route('/items', methods=['GET'])
 def get_all_items():
     return jsonify(dump_schema().dump(ItemModel.get_all(), many=True).data)
 
 
-@item_api.route('/categories/<int:category_id>/items/<int:item_id>', methods=['GET'])
-def get_item(item_id, category_id):
-    try:
-        item = ItemModel.find_by_id(item_id)
-        if not item:
-            raise NotFoundError('No item found')
-        # If item exists then it is returned.
-        return jsonify(dump_schema().dump(item).data)
-
-    except AppError as err:
-        return jsonify({'message': err.message}), err.status_code
+@item_api.route('/items/<int:item_id>', methods=['GET'])
+def get_item(item_id):
+    item = ItemModel.find_by_id(item_id)
+    if not item:
+        raise NotFoundError('No item found')
+    # If item exists then it is returned.
+    return jsonify(dump_schema().dump(item).data)
 
 
 @item_api.route('/categories/<int:category_id>/items', methods=['POST'])
-@header_authorization_required
-@header_content_type_json_required
-def create_item(category_id):
-    try:
-        # Validate access token and extract author (user object) from the token.
-        token = get_token_from_header(request)
-        author = get_user_from_token(token)
-        # Request body is validated using resource='item' and action='create'.
-        validated_data = get_data_from_request(request, resource='item')
-        validated_data.update([('category_id', category_id), ('author_id', author.id)])
-        item = get_created_object_from_data(validated_data, resource='item')
-        # If item is created successfully then it is saved and returned.
-        item.save_to_db()
-        return jsonify(dump_schema().dump(item).data), 201
+@authorization_required
+@json_data_required(load_schema)
+def create_item(validated_data, user, category_id):
+    # If item's name is not unique then raises error.
+    item = ItemModel.find_by_name(validated_data['name'])
+    if item is not None:
+        raise BadRequestError('category already exists')
 
-    except AppError as err:
-        return jsonify({'message': err.message}), err.status_code
+    # If the request is valid, then new item is created, save, and returned.
+    validated_data.update([('category_id', category_id), ('author_id', user.id)])
+    item = ItemModel(**validated_data)
+    item.save_to_db()
+    return jsonify(dump_schema().dump(item).data), 201
 
 
 @item_api.route('/categories/<int:category_id>/items/<int:item_id>', methods=['PUT'])
-@header_authorization_required
-@header_content_type_json_required
-def update_item(item_id, category_id):
-    try:
-        # Validate access token and extract user from the token.
-        token = get_token_from_header(request)
-        author = get_user_from_token(token)
-        # Request body is validated using resource='item' and action='update'.
-        validated_data = get_data_from_request(request, resource='item')
-        validated_data.update([('id', item_id), ('category_id', category_id), ('author_id', author.id)])
-        item = get_object_to_update_from_data(validated_data, resource='item')
-        # If user is not the creator of item then returns unauthorized error.
-        if author.id != item.author_id:
-            return jsonify({'message': 'Unauthorized action'}), 401
-        # Request is valid. Item is updated, saved, and returned.
-        item.update(validated_data)
-        item.save_to_db()
-        return jsonify(dump_schema().dump(item).data)
+@authorization_required
+@json_data_required(load_schema)
+def update_item(validated_data, user, item_id, category_id):
+    # If the name is changed, and new name is not unique then raises error.
+    item = ItemModel.find_by_name(validated_data['name'])
+    if item is not None and item.id != item_id:
+        raise BadRequestError('item name already exists')
 
-    except AppError as err:
-        return jsonify({'message': err.message}), err.status_code
+    # The resource that is requested has to exist.
+    item = ItemModel.find_by_id(item_id)
+    if item is None:
+        raise NotFoundError('No item found')
+
+    # If user is not the creator of item then returns unauthorized error.
+    if user.id != item.author_id:
+        raise UnauthorizedError('Unauthorized action')
+
+    # Request is valid. Item is updated, saved, and returned.
+    validated_data['category_id'] = category_id
+    item.update(validated_data)
+    item.save_to_db()
+    return jsonify(dump_schema().dump(item).data)
 
 
-@item_api.route('/categories/<int:category_id>/items/<int:item_id>', methods=['DELETE'])
-@header_authorization_required
-def delete_item(item_id, category_id):
-    try:
-        # Validate access token and extract user from the token.
-        token = get_token_from_header(request)
-        user = get_user_from_token(token)
-        # If the requested item doesn't exist then return 404 error.
-        item = ItemModel.find_by_id(item_id)
-        if item is None:
-            return jsonify({'message': 'No item found'}), 404
-        # If user is not the creator of the item then returns unauthorized error.
-        if user.id != item.author_id:
-            return jsonify({'message': 'Unauthorized action'}), 401
-        # If the action is valid, item is deleted. Succeed message is returned.
-        item.delete_from_db()
-        return jsonify({'message': 'Item deleted'})
+@item_api.route('/items/<int:item_id>', methods=['DELETE'])
+@authorization_required
+def delete_item(user, item_id):
+    # If the requested item doesn't exist then return 404 error.
+    item = ItemModel.find_by_id(item_id)
+    if item is None:
+        raise NotFoundError('No item found')
 
-    except AppError as err:
-        return jsonify({'message': err.message}), err.status_code
+    # If user is not the creator of the item then returns unauthorized error.
+    if user.id != item.author_id:
+        raise UnauthorizedError('Unauthorized action')
 
+    # If the action is valid, item is deleted. Succeed message is returned.
+    item.delete_from_db()
+    return jsonify({'message': 'Item deleted'})

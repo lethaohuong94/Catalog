@@ -1,9 +1,11 @@
 import os
-from flask import Flask
+from flask import Flask, jsonify
 
 from controllers.user import user_api
 from controllers.category import category_api, add_default_category
 from controllers.item import item_api
+from helpers.errors import error_handler
+
 
 app = Flask(__name__)
 
@@ -36,6 +38,7 @@ def create_tables():
 app.register_blueprint(user_api)
 app.register_blueprint(category_api)
 app.register_blueprint(item_api)
+app.register_blueprint(error_handler)
 
 
 if __name__ == '__main__':

@@ -9,10 +9,11 @@ from helpers.errors import *
 # This function encodes user's information into access_token.
 def encode(user):
     # Each token lasts for 15 minutes.
-    iat = datetime.datetime.utcnow()
+    # iat -> now for readability
+    now = datetime.datetime.utcnow()
     payload = {
-        'exp': iat + datetime.timedelta(days=0, minutes=15),
-        'iat': iat,
+        'exp': now + datetime.timedelta(days=0, minutes=15),
+        'iat': now,
         'id': user.id
     }
     return jwt.encode(
@@ -47,10 +48,3 @@ def get_user_from_token(access_token):
         raise BadRequestError('Invalid access token')
     # If the token is valid, return user object
     return user
-
-
-# This function extracts access token from validated Authorization header
-def get_token_from_header(request):
-    header_value = request.headers['Authorization']
-    token = header_value[len('Bearer '):]
-    return token

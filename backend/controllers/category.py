@@ -3,11 +3,11 @@ from flask import current_app, request, Blueprint, jsonify
 from models.category import CategoryModel
 from helpers.errors import *
 from helpers.validators import *
-from helpers.security import *
-from helpers.schemas import CategoryDumpSchema
+from helpers.schemas import CategorySchema
 
 category_api = Blueprint('category_api', __name__)
-dump_schema = CategoryDumpSchema
+dump_schema = CategorySchema
+load_schema = CategorySchema
 
 
 def add_default_category():
@@ -22,82 +22,71 @@ def get_all_categories():
 
 @category_api.route('/categories/<int:category_id>', methods=['GET'])
 def get_category(category_id):
-    try:
-        category = CategoryModel.find_by_id(category_id)
-        if not category:
-            raise NotFoundError('No category found')
-        # If category exists then it is returned.
-        return jsonify(dump_schema().dump(category).data)
-
-    except AppError as err:
-        return jsonify({'message': err.message}), err.status_code
+    category = CategoryModel.find_by_id(category_id)
+    if not category:
+        raise NotFoundError('No category found')
+    # If category exists then it is returned.
+    return jsonify(dump_schema().dump(category).data)
 
 
 @category_api.route('/categories', methods=['POST'])
-@header_content_type_json_required
-def create_category():
-    try:
-        # Validate access token and extract author (user object) from the token.
-        token = get_token_from_header(request)
-        author = get_user_from_token(token)
-        # Request body is validated using resource='category' and action='create'.
-        validated_data = get_data_from_request(request, resource='category')
-        validated_data['author_id'] = author.id
-        category = get_created_object_from_data(validated_data, 'category')
-        # If category is created successfully then it is saved and returned.
-        category.save_to_db()
-        return jsonify(dump_schema().dump(category).data), 201
+@authorization_required
+@json_data_required(load_schema)
+def create_category(validated_data, user):
+    # If category's name is not unique then raises error.
+    category = CategoryModel.find_by_name(validated_data['name'])
+    if category is not None:
+        raise BadRequestError('category already exists')
 
-    except AppError as err:
-        return jsonify({'message': err.message}), err.status_code
+    # Request is valid then new category is created, saved, and returned.
+    validated_data['author_id'] = user.id
+    category = CategoryModel(**validated_data)
+    category.save_to_db()
+    return jsonify(dump_schema().dump(category).data), 201
 
 
 @category_api.route('/categories/<int:category_id>', methods=['PUT'])
-@header_authorization_required
-@header_content_type_json_required
-def update_category(category_id):
-    try:
-        # Validate access token and extract user from the token.
-        token = get_token_from_header(request)
-        user = get_user_from_token(token)
-        # Request body is validated using resource='category' and action='update'.
-        validated_data = get_data_from_request(request, resource='category')
-        validated_data['id'] = category_id
-        category = get_object_to_update_from_data(validated_data, resource='category')
-        # If user is not the creator of category then returns unauthorized error.
-        if user.id != category.author_id:
-            raise UnauthorizedError('Unauthorized action')
-        # Request is valid. Category is updated, saved, and returned.
-        category.update(validated_data)
-        category.save_to_db()
-        return jsonify(dump_schema().dump(category).data)
+@authorization_required
+@json_data_required(load_schema)
+def update_category(validated_data, user, category_id):
+    # If name is changed and new name exists then raises error.
+    category = CategoryModel.find_by_name(validated_data['name'])
+    if category is not None and category.id != category_id:
+        raise BadRequestError(resource + ' name already exists')
 
-    except AppError as err:
-        return jsonify({'message': err.message}), err.status_code
+    # The resource that is requested has to exist.
+    category = CategoryModel.find_by_id(category_id)
+    if category is None:
+        raise NotFoundError('No category found')
+
+    # If user is not the creator of category then returns unauthorized error.
+    if user.id != category.author_id:
+        raise UnauthorizedError('Unauthorized action')
+
+    # Request is valid. Category is updated, saved, and returned.
+    category.update(validated_data)
+    category.save_to_db()
+    return jsonify(dump_schema().dump(category).data)
 
 
 @category_api.route('/categories/<int:category_id>', methods=['DELETE'])
-@header_authorization_required
-def delete_category(category_id):
-    try:
-        # Validate access token and extract user from the token.
-        token = get_token_from_header(request)
-        user = get_user_from_token(token)
-        # If the requested category doesn't exist then return 404 error.
-        category = CategoryModel.find_by_id(category_id)
-        if category is None:
-            raise NotFoundError('No category found')
-        # If user is not the creator of the category then returns unauthorized error.
-        if user.id != category.author_id:
-            raise UnauthorizedError('Unauthorized action')
-        # Before the category is deleted, all items it contains is moved to default category.
-        default_category = CategoryModel.find_by_name(current_app.config['DEFAULT_CATEGORY'])
-        for item in category.items:
-            item.category_id = default_category.id
-            item.save_to_db()
-        # If the action is valid, category is deleted. Succeed message is returned.
-        category.delete_from_db()
-        return jsonify({'message': 'Category deleted'})
+@authorization_required
+def delete_category(user, category_id):
+    # If the requested category doesn't exist then return 404 error.
+    category = CategoryModel.find_by_id(category_id)
+    if category is None:
+        raise NotFoundError('No category found')
 
-    except AppError as err:
-        return jsonify({'message': err.message}), err.status_code
+    # If user is not the creator of the category then returns unauthorized error.
+    if user.id != category.author_id:
+        raise UnauthorizedError('Unauthorized action')
+
+    # Before the category is deleted, all items it contains is moved to default category.
+    default_category = CategoryModel.find_by_name(current_app.config['DEFAULT_CATEGORY'])
+    for item in category.items:
+        item.category_id = default_category.id
+        item.save_to_db()
+
+    # If the action is valid, category is deleted. Succeed message is returned.
+    category.delete_from_db()
+    return jsonify({'message': 'Category deleted'})

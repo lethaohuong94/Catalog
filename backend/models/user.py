@@ -1,7 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from db import db
-from helpers.schemas import *
 from helpers.errors import *
 
 
@@ -10,7 +9,7 @@ class UserModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20))
-    pw_hash = db.Column(db.String(100))
+    password_hash = db.Column(db.String(100))
 
     categories = db.relationship('CategoryModel')
     items = db.relationship('ItemModel')
@@ -29,13 +28,13 @@ class UserModel(db.Model):
 
     # Password is hashed before saved into db.
     def set_password(self, password):
-        self.pw_hash = generate_password_hash(password, salt_length=1)
+        self.password_hash = generate_password_hash(password, salt_length=8)
 
     def update(self, data):
         self.set_password(data['password'])
 
     def check_password(self, password):
-        return check_password_hash(self.pw_hash, password)
+        return check_password_hash(self.password_hash, password)
 
     def save_to_db(self):
         try:

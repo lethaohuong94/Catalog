@@ -1,3 +1,9 @@
+from flask import Blueprint, jsonify
+from werkzeug.exceptions import HTTPException
+
+error_handler = Blueprint('error_handler', __name__)
+
+
 class AppError(Exception):
     def __init__(self, message):
         Exception.__init__(self)
@@ -26,3 +32,15 @@ class InternalError(AppError):
     def __init__(self, message):
         AppError.__init__(self, message)
         self.status_code = 500
+
+
+@error_handler.app_errorhandler(AppError)
+def handle_invalid_usage(error):
+    response = jsonify({'message': error.message})
+    response.status_code = error.status_code
+    return response
+
+
+@error_handler.app_errorhandler(HTTPException)
+def HTTP_exceptions_handler(e):
+    return jsonify({'message': e.description}), e.code
