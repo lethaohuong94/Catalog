@@ -7,7 +7,9 @@
 - pip
 
 <br>
-**In order to install the project:**  
+
+**In order to install the project:**    
+
 1. If you have both python2 and python3 installed, you can execute  
 > $ alias python=python3 
    
@@ -35,6 +37,7 @@ default is:
 in order to tell dynamic linkers where to look for mysql libraries
 
 <br>
+
 #### CONFIGURATIONS  
 
 1. Inside the directory backend/configurations is where all the configuration files are (there are local, dev, test, staging, and prod).  
@@ -45,14 +48,17 @@ NOTE:
 - the program will not work if your database doesn't exist, please create it beforehand   
 
 <br>
+
 2. DEFAULT_CATEGORY is the name of your default category that hold all items that don't belong to any category, please change it if you wish, but it can't be None    
 
 <br>
+
 3. Inside the configuration objects is JWT_SECRET_KEY field.  
 This field hold the secret key used to encode and decode your data.   
 Please change it accordingly, but do NOT post it anywhere or give it to anyone. 
 
 <br> 
+
 4. In order to run the app, cd to backend/ folder and execute:
 > $ ENV=YOUR_ENVIROMENT python app.py   
 
@@ -64,6 +70,7 @@ For example, if your working environment is development, execute:
 If you don't set ENV variable, or ENV is not recognized, the default ENV is 'local'
 
 <br>
+
 #### TESTING
 
 Inside the folder backend/ is the folder tests/, in which there are unit tests for each unit of the project   
