@@ -22,6 +22,3 @@ class UserSchema(Schema):
     password = fields.Str(required=True, validate=validate.Length(min=1), load_only=True)
     categories = fields.Nested(CategorySchema, only=['name'], many=True)
     items = fields.Nested(ItemSchema, only=['name'], many=True)
-
-    class Meta:
-        fields = ('id', 'name')

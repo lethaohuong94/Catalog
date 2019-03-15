@@ -1,25 +1,12 @@
 from functools import wraps
 from flask import request
 
-from helpers.schemas import *
+# from helpers.schemas import *
 from helpers.errors import *
 from helpers.security import get_user_from_token
-from models.user import UserModel
-from models.category import CategoryModel
-from models.item import ItemModel
-
-# If the schemas are changed, it can be easily edited here instead of one by one in each function.
-schemas = {
-    'user': UserSchema,
-    'category': CategorySchema,
-    'item': ItemSchema
-}
-
-models = {
-    'user': UserModel,
-    'category': CategoryModel,
-    'item': ItemModel
-}
+# from models.user import UserModel
+# from models.category import CategoryModel
+# from models.item import ItemModel
 
 
 # This decorator wraps around end points that required access token.
