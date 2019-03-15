@@ -32,16 +32,9 @@ request = Request()
 load_result = LoadResult()
 
 
-@json_data_required
-def f(data):
-    return True
-
-
 # Test Content-Type header
 def test_no_content_header():
-    f('data')
-    # assert result['message'] == 'Invalid Content-Type header'
-        # validate_request_header(request, content=True, authorization=True)
+    pass
 
 
 """

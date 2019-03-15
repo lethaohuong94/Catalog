@@ -1,12 +1,8 @@
 from functools import wraps
 from flask import request
 
-# from helpers.schemas import *
 from helpers.errors import *
 from helpers.security import get_user_from_token
-# from models.user import UserModel
-# from models.category import CategoryModel
-# from models.item import ItemModel
 
 
 # This decorator wraps around end points that required access token.
@@ -37,7 +33,6 @@ def json_data_required(schema):
     def validate_data(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            expected_header_value = 'application/json'
             content_type_error = BadRequestError('Invalid Content-Type header')
             # If Content-Type header does not exist then returns error.
             try:
@@ -45,7 +40,7 @@ def json_data_required(schema):
             except Exception:
                 raise content_type_error
             # If value of Content-Type header is not application/json then returns error.
-            if not content_type == expected_header_value:
+            if not content_type == 'application/json':
                 raise content_type_error
 
             try:

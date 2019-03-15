@@ -35,12 +35,10 @@ class InternalError(AppError):
 
 
 @error_handler.app_errorhandler(AppError)
-def handle_invalid_usage(error):
-    response = jsonify({'message': error.message})
-    response.status_code = error.status_code
-    return response
+def app_error_handler(error):
+    return jsonify({'message': error.message}), error.status_code
 
 
 @error_handler.app_errorhandler(HTTPException)
-def HTTP_exceptions_handler(e):
+def http_exceptions_handler(e):
     return jsonify({'message': e.description}), e.code

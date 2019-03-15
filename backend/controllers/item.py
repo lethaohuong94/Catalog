@@ -27,15 +27,15 @@ def get_item(item_id):
 @item_api.route('/categories/<int:category_id>/items', methods=['POST'])
 @authorization_required
 @json_data_required(load_schema)
-def create_item(validated_data, user, category_id):
+def create_item(data, user, category_id):
     # If item's name is not unique then raises error.
-    item = ItemModel.find_by_name(validated_data['name'])
+    item = ItemModel.find_by_name(data['name'])
     if item is not None:
         raise BadRequestError('category already exists')
 
     # If the request is valid, then new item is created, save, and returned.
-    validated_data.update([('category_id', category_id), ('author_id', user.id)])
-    item = ItemModel(**validated_data)
+    data.update([('category_id', category_id), ('author_id', user.id)])
+    item = ItemModel(**data)
     item.save_to_db()
     return jsonify(dump_schema().dump(item).data), 201
 
@@ -43,9 +43,9 @@ def create_item(validated_data, user, category_id):
 @item_api.route('/categories/<int:category_id>/items/<int:item_id>', methods=['PUT'])
 @authorization_required
 @json_data_required(load_schema)
-def update_item(validated_data, user, item_id, category_id):
+def update_item(data, user, item_id, category_id):
     # If the name is changed, and new name is not unique then raises error.
-    item = ItemModel.find_by_name(validated_data['name'])
+    item = ItemModel.find_by_name(data['name'])
     if item is not None and item.id != item_id:
         raise BadRequestError('item name already exists')
 
@@ -59,8 +59,8 @@ def update_item(validated_data, user, item_id, category_id):
         raise UnauthorizedError('Unauthorized action')
 
     # Request is valid. Item is updated, saved, and returned.
-    validated_data['category_id'] = category_id
-    item.update(validated_data)
+    data['category_id'] = category_id
+    item.update(data)
     item.save_to_db()
     return jsonify(dump_schema().dump(item).data)
 

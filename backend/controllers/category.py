@@ -32,15 +32,15 @@ def get_category(category_id):
 @category_api.route('/categories', methods=['POST'])
 @authorization_required
 @json_data_required(load_schema)
-def create_category(validated_data, user):
+def create_category(data, user):
     # If category's name is not unique then raises error.
-    category = CategoryModel.find_by_name(validated_data['name'])
+    category = CategoryModel.find_by_name(data['name'])
     if category is not None:
         raise BadRequestError('category already exists')
 
     # Request is valid then new category is created, saved, and returned.
-    validated_data['author_id'] = user.id
-    category = CategoryModel(**validated_data)
+    data['author_id'] = user.id
+    category = CategoryModel(**data)
     category.save_to_db()
     return jsonify(dump_schema().dump(category).data), 201
 
@@ -48,9 +48,9 @@ def create_category(validated_data, user):
 @category_api.route('/categories/<int:category_id>', methods=['PUT'])
 @authorization_required
 @json_data_required(load_schema)
-def update_category(validated_data, user, category_id):
+def update_category(data, user, category_id):
     # If name is changed and new name exists then raises error.
-    category = CategoryModel.find_by_name(validated_data['name'])
+    category = CategoryModel.find_by_name(data['name'])
     if category is not None and category.id != category_id:
         raise BadRequestError(resource + ' name already exists')
 
@@ -64,7 +64,7 @@ def update_category(validated_data, user, category_id):
         raise UnauthorizedError('Unauthorized action')
 
     # Request is valid. Category is updated, saved, and returned.
-    category.update(validated_data)
+    category.update(data)
     category.save_to_db()
     return jsonify(dump_schema().dump(category).data)
 
