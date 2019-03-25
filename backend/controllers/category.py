@@ -1,7 +1,6 @@
-from flask import current_app, request, Blueprint, jsonify
+from flask import current_app
 
 from models.category import CategoryModel
-from helpers.errors import *
 from helpers.validators import *
 from helpers.schemas import CategorySchema
 

@@ -35,10 +35,12 @@ class InternalError(AppError):
 
 
 @error_handler.app_errorhandler(AppError)
-def app_error_handler(error):
-    return jsonify({'message': error.message}), error.status_code
+def app_error_handler(e):
+    print(e.message)
+    return jsonify({'message': e.message}), e.status_code
 
 
 @error_handler.app_errorhandler(HTTPException)
 def http_exceptions_handler(e):
+    print(e.description)
     return jsonify({'message': e.description}), e.code

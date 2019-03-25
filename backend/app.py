@@ -1,5 +1,5 @@
 import os
-from flask import Flask, jsonify
+from flask import Flask
 
 from controllers.user import user_api
 from controllers.category import category_api, add_default_category
@@ -39,6 +39,14 @@ app.register_blueprint(user_api)
 app.register_blueprint(category_api)
 app.register_blueprint(item_api)
 app.register_blueprint(error_handler)
+
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
 
 
 if __name__ == '__main__':
