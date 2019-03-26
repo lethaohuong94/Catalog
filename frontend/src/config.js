@@ -1,21 +1,25 @@
 const dev = {
   //configurations for dev
   NAME: 'dev',
+  URL: 'http://127.0.0.1:5000',
 };
 
 const prod = {
   //configurations for prod
   NAME: 'prod',
+  URL: 'http://127.0.0.1:5000',
 };
 
 const staging = {
   //configurations for staging
   NAME: 'staging',
+  URL: 'http://127.0.0.1:5000',
 };
 
 const test = {
   //configurations for test
   NAME: 'test',
+  URL: 'http://127.0.0.1:5000',
 };
 
 let config = dev;

@@ -10,14 +10,28 @@ import LogIn from './User/LogIn';
 import ChangePassword from './User/ChangePassword';
 
 class Main extends Component {
+  constructor() {
+    super();
+    this.state = {
+      userId: 0,
+      loggedIn: false,
+      accessToken: 'token',
+    };
+    this.ChangeState = this.ChangeState.bind(this);
+  }
+
+  ChangeState(newState) {
+    this.setState(() => newState);
+  }
+
   render() {
     return (
       <div>
-        <Header />
+        <Header {...this.state} onChangeState={this.ChangeState} />
         <Switch>
-          <Route path="/register" exact component={Register} />
-          <Route path="/login" exact component={LogIn} />
-          <Route path="/changepassword" exact component={ChangePassword} />
+          <Route path="/register" exact render={() => <Register {...this.state} />} />
+          <Route path="/login" exact render={() => <LogIn {...this.state} onChangeState={this.ChangeState} />} />
+          <Route path="/changepassword" exact render={() => <ChangePassword {...this.state} onChangeState={this.ChangeState} />} />
           <Route component={Panel} />
         </Switch>
       </div>

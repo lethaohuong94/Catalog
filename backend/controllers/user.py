@@ -18,7 +18,8 @@ def create_user(data):
     # If successfully create new user then save that to db and returns message.
     user = UserModel(**data)
     user.save_to_db()
-    return jsonify({'message': 'user created successfully'}), 201
+    user = UserModel.find_by_name(data['name'])
+    return jsonify({'message': 'user created successfully', 'id': user.id}), 201
 
 
 @user_api.route('/auth', methods=['POST'])
@@ -32,7 +33,8 @@ def authenticate_user(data):
         raise UnauthorizedError('Invalid username/password')
     # If identity is successfully proven, then returns access token.
     access_token = encode(user)
-    return jsonify({'access_token': access_token})
+    user = UserModel.find_by_name(data['name'])
+    return jsonify({'access_token': access_token, 'id': user.id})
 
 
 @user_api.route('/users/<int:user_id>', methods=['PUT'])

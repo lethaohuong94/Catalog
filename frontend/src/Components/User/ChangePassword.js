@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import toastr from 'toastr';
+import config from '../../config';
 
 class ChangePassword extends Component {
   constructor() {
@@ -9,37 +11,64 @@ class ChangePassword extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    const props = this.props;
     const name = event.target.elements.name.value;
     const oldPassword = event.target.elements.oldPassword.value;
     const newPassword = event.target.elements.newPassword.value;
     const confirmPassword = event.target.elements.confirmPassword.value;
     if (newPassword !== confirmPassword) {
       this.message = 'passwords do not match';
-      console.log(this.message);
-      // eslint-disable-next-line no-param-reassign
-      event.target.elements.newPassword.value = '';
-      // eslint-disable-next-line no-param-reassign
-      event.target.elements.confirmPassword.value = '';
-      this.forceUpdate();
+      toastr.clear();
+      setTimeout(() => toastr.error(`${this.message}`), 300);
       return;
     }
-    const targetUrl = 'http://127.0.0.1:5000/auth';
-    fetch(targetUrl, {
+
+    //Initialize requests
+    //const postUrl = 'http://127.0.0.1:5000/auth';
+    const postUrl = `${config.URL}/auth`;
+    const postRequest = {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, password: oldPassword }),
-    })
+    };
+    const requestHeaders = new Headers({ 'Content-Type': 'application/json' });
+    requestHeaders.append('Authorization', `Bearer ${props.accessToken}`);
+    const putRequest = {
+      method: 'PUT',
+      headers: requestHeaders,
+      body: JSON.stringify({ name, password: newPassword }),
+    };
+
+    fetch(postUrl, postRequest)
       .then(response => response.json())
       .then((json) => {
-        this.message = json.message;
-        console.log(this.message);
-        this.forceUpdate();
-      })
-      .catch((error) => {
-        console.log(error);
-        return error;
+        console.log(json);
+        //If old password is invalid then show error toast
+        if (!('access_token' in json)) {
+          toastr.clear();
+          setTimeout(() => toastr.error(`${json.message}`), 300);
+          return;
+        }
+        //If success then make api call to change password
+        const putUrl = `http://127.0.0.1:5000/users/${json.id}`;
+        fetch(putUrl, putRequest)
+          .then(response => response.json())
+          .then((json) => {
+            console.log(json);
+            //If password is not updated then throw error
+            if (json.message !== 'User updated successfully') {
+              throw Error(json.message);
+            }
+            //If success then show success toast
+            toastr.clear();
+            setTimeout(() => toastr.success(json.message), 300);
+          })
+          //Catch error and show error toast
+          .catch((error) => {
+            console.log(error.message);
+            toastr.clear();
+            setTimeout(() => toastr.error(`${error.message}`), 300);
+          });
       });
   }
 

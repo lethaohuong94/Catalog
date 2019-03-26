@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import toastr from 'toastr';
+import config from '../../config';
 
 class Register extends Component {
   constructor() {
     super();
-    this.message = 'Please fill the form';
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -13,37 +14,38 @@ class Register extends Component {
     const password = event.target.elements.password.value;
     const confirmPassword = event.target.elements.confirmPassword.value;
     if (password !== confirmPassword) {
-      this.message = 'passwords do not match';
-      console.log(this.message);
-      // eslint-disable-next-line no-param-reassign
-      event.target.elements.password.value = '';
-      // eslint-disable-next-line no-param-reassign
-      event.target.elements.confirmPassword.value = '';
-      this.forceUpdate();
+      toastr.clear();
+      setTimeout(() => toastr.error('passwords do not match'), 300);
       return;
     }
-    const targetUrl = 'http://127.0.0.1:5000/users';
-    fetch(targetUrl, {
+
+    //Initialize api call to register user
+    //const url = 'http://127.0.0.1:5000/users';
+    const url = `${config.URL}/users`;
+    const request = {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, password }),
-    })
-      .then(response => ({ data: response.json(), status: response.status }))
-      .then((response) => {
-        //take care of status code here
-        console.log(response.status);
-        return response.data;
+    };
+
+    //Make an api call to register user
+    fetch(url, request)
+      .then(response => response.json())
+      .then((json) => {
+        console.log(json);
+        //If not success then throw error
+        if (json.message !== 'user created successfully') {
+          throw Error(json.message);
+        }
+        //If success then show a success toast
+        toastr.clear();
+        setTimeout(() => toastr.success(json.message), 300);
       })
-      .then((data) => {
-        //take care of response's message here
-        console.log(data.message);
-        this.message = data.message;
-        this.forceUpdate();
-      })
+      //Catch error in response and show an error toast
       .catch((error) => {
-        console.log(error);
+        console.log(error.message);
+        toastr.clear();
+        setTimeout(() => toastr.error(`${error.message}`), 300);
         return error;
       });
   }
@@ -54,7 +56,7 @@ class Register extends Component {
         <h3>This is where new user registers</h3>
         <div className="form">
           <form onSubmit={this.handleSubmit}>
-            <h5>{this.message}</h5>
+            <h5>Please fill the form</h5>
             <input type="text" placeholder="Username" name="name" />
             <input type="password" placeholder="Password" name="password" />
             <input type="password" placeholder="Confirm Password" name="confirmPassword" />
