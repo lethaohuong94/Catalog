@@ -1,13 +1,14 @@
 import config from './config';
 
 export function get(uri, accessToken = '') {
-  const postUrl = `${config.URL}${uri}`;
-  const requestHeaders = new Headers('Authorization', `Bearer ${accessToken}`);
+  const getUrl = `${config.URL}${uri}`;
+  const requestHeaders = new Headers();
+  requestHeaders.append('Authorization', `Bearer ${accessToken}`);
   const request = {
-    method: 'POST',
+    method: 'GET',
     headers: requestHeaders,
   };
-  return { url: postUrl, request };
+  return { url: getUrl, request };
 }
 
 export function post(uri, body, accessToken = '') {
@@ -35,11 +36,12 @@ export function put(uri, body, accessToken = '') {
 }
 
 export function del(uri, accessToken = '') {
-  const postUrl = `${config.URL}${uri}`;
-  const requestHeaders = new Headers('Authorization', `Bearer ${accessToken}`);
+  const delUrl = `${config.URL}${uri}`;
+  const requestHeaders = new Headers();
+  requestHeaders.append('Authorization', `Bearer ${accessToken}`);
   const request = {
     method: 'DEL',
     headers: requestHeaders,
   };
-  return { url: postUrl, request };
+  return { url: delUrl, request };
 }
