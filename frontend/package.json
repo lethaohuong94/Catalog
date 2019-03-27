@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "eslint-config-airbnb": "^17.1.0",
+    "local-storage": "^1.4.2",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "react-router-dom": "^5.0.0",

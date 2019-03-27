@@ -5,6 +5,7 @@ import {
   Switch,
   Redirect,
 } from 'react-router-dom';
+import localStorage from 'local-storage';
 import Header from './Header';
 import Panel from './Panel';
 import Register from './User/Register';
@@ -23,8 +24,13 @@ class Main extends Component {
     this.changeState = this.changeState.bind(this);
   }
 
+  componentDidMount() {
+    this.setState(localStorage.get('state'));
+  }
+
   changeState(newState) {
     this.setState(newState);
+    localStorage.set('state', newState);
   }
 
   render() {
