@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { showErrorToast, showSuccessToast } from '../../Helpers';
-import config from '../../config';
+import { showErrorToast, showSuccessToast } from '../../helpers';
+import { post, put } from '../../fetchHelpers';
 
 class ChangePassword extends Component {
   constructor() {
@@ -20,35 +20,22 @@ class ChangePassword extends Component {
     }
 
     //Initialize requests
-    const postUrl = `${config.URL}/auth`;
-    const postRequest = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: userName, password: oldPassword }),
-    };
-    const requestHeaders = new Headers({ 'Content-Type': 'application/json' });
-    requestHeaders.append('Authorization', `Bearer ${accessToken}`);
-    const putRequest = {
-      method: 'PUT',
-      headers: requestHeaders,
-      body: JSON.stringify({ name: userName, password: newPassword }),
-    };
+    const postRequest = post('/auth', { name: userName, password: oldPassword });
+    const putRequest = put(`/users/${userId}`, { name: userName, password: newPassword }, accessToken);
 
-    fetch(postUrl, postRequest)
+
+    fetch(postRequest.url, postRequest.request)
       .then(response => response.json())
       .then((json) => {
-        console.log(json);
         //If old password is invalid then show error toast
         if (!('access_token' in json)) {
           showErrorToast(json.message);
           return;
         }
         //If success then make api call to change password
-        const putUrl = `${config.URL}/users/${userId}`;
-        fetch(putUrl, putRequest)
+        fetch(putRequest.url, putRequest.request)
           .then(response => response.json())
           .then((json) => {
-            console.log(json);
             //If password is not updated then throw error
             if (json.message !== 'User updated successfully') {
               showErrorToast(json.message);

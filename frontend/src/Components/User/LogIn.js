@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { showErrorToast, showSuccessToast } from '../../Helpers';
-import config from '../../config';
+import { showErrorToast, showSuccessToast } from '../../helpers';
+import { post } from '../../fetchHelpers';
 
 class LogIn extends Component {
   constructor() {
@@ -13,19 +13,12 @@ class LogIn extends Component {
     const name = event.target.elements.name.value;
     const password = event.target.elements.password.value;
 
-    //Initialize api request to authenticate user
-    const url = `${config.URL}/auth`;
-    const request = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, password }),
-    };
+    const request = post('/auth', { name, password });
 
     //Make api call to authenticate user
-    fetch(url, request)
+    fetch(request.url, request.request)
       .then(response => response.json())
       .then((json) => {
-        console.log(json);
         //If not success then throw error
         if (!('access_token' in json)) {
           throw Error(json.message);

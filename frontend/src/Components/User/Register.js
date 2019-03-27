@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import config from '../../config';
-import { showErrorToast, showSuccessToast } from '../../Helpers';
+import { post } from '../../fetchHelpers';
+import { showErrorToast, showSuccessToast } from '../../helpers';
 
 class Register extends Component {
   constructor() {
@@ -18,19 +18,12 @@ class Register extends Component {
       return;
     }
 
-    //Initialize api call to register user
-    const url = `${config.URL}/users`;
-    const request = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, password }),
-    };
+    const request = post('/users', { name, password });
 
     //Make an api call to register user
-    fetch(url, request)
+    fetch(request.url, request.request)
       .then(response => response.json())
       .then((json) => {
-        console.log(json);
         //If not success then throw error
         if (json.message !== 'user created successfully') {
           throw Error(json.message);
