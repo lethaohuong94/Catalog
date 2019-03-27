@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ShowErrorToast, ShowSuccessToast } from '../../Helpers';
+import { showErrorToast, showSuccessToast } from '../../Helpers';
 import config from '../../config';
 
 class LogIn extends Component {
@@ -40,11 +40,11 @@ class LogIn extends Component {
         };
         const { onChangeState } = this.props;
         onChangeState(state);
-        ShowSuccessToast('Log in successfully');
+        showSuccessToast('Log in successfully');
       })
       //Catch error and show an error toast
       .catch((error) => {
-        ShowErrorToast(error.message);
+        showErrorToast(error.message);
         return error;
       });
   }

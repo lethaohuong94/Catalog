@@ -1,11 +1,11 @@
 import toastr from 'toastr';
 
-export function ShowErrorToast(message) {
+export function showErrorToast(message) {
   toastr.clear();
   toastr.error(message);
 }
 
-export function ShowSuccessToast(message) {
+export function showSuccessToast(message) {
   toastr.clear();
   toastr.success(message);
 }

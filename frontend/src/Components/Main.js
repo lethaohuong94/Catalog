@@ -20,10 +20,10 @@ class Main extends Component {
       loggedIn: false,
       accessToken: 'token',
     };
-    this.ChangeState = this.ChangeState.bind(this);
+    this.changeState = this.changeState.bind(this);
   }
 
-  ChangeState(newState) {
+  changeState(newState) {
     this.setState(newState);
   }
 
@@ -31,10 +31,10 @@ class Main extends Component {
     console.log(this.state.loggedIn);
     return (
       <div>
-        <Header {...this.state} onChangeState={this.ChangeState} />
+        <Header {...this.state} onChangeState={this.changeState} />
         <Switch>
           <Route path="/register" exact render={() => (this.state.loggedIn ? <Redirect to="/" /> : <Register />)} />
-          <Route path="/login" exact render={() => (this.state.loggedIn ? <Redirect to="/" /> : <LogIn onChangeState={this.ChangeState} />)} />
+          <Route path="/login" exact render={() => (this.state.loggedIn ? <Redirect to="/" /> : <LogIn onChangeState={this.changeState} />)} />
           <Route path="/changepassword" exact render={() => (this.state.loggedIn ? <ChangePassword {...this.state} /> : <Redirect to="/" />)} />
           <Route component={Panel} />
         </Switch>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ShowErrorToast, ShowSuccessToast } from '../../Helpers';
+import { showErrorToast, showSuccessToast } from '../../Helpers';
 import config from '../../config';
 
 class ChangePassword extends Component {
@@ -15,7 +15,7 @@ class ChangePassword extends Component {
     const newPassword = event.target.elements.newPassword.value;
     const confirmPassword = event.target.elements.confirmPassword.value;
     if (newPassword !== confirmPassword) {
-      ShowErrorToast('Passwords do not match');
+      showErrorToast('Passwords do not match');
       return;
     }
 
@@ -40,7 +40,7 @@ class ChangePassword extends Component {
         console.log(json);
         //If old password is invalid then show error toast
         if (!('access_token' in json)) {
-          ShowErrorToast(json.message);
+          showErrorToast(json.message);
           return;
         }
         //If success then make api call to change password
@@ -51,13 +51,13 @@ class ChangePassword extends Component {
             console.log(json);
             //If password is not updated then throw error
             if (json.message !== 'User updated successfully') {
-              ShowErrorToast(json.message);
+              showErrorToast(json.message);
             }
             //If success
-            ShowSuccessToast(json.message);
+            showSuccessToast(json.message);
           })
           .catch((error) => {
-            ShowErrorToast(error.message);
+            showErrorToast(error.message);
           });
       });
   }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import config from '../../config';
-import { ShowErrorToast, ShowSuccessToast } from '../../Helpers';
+import { showErrorToast, showSuccessToast } from '../../Helpers';
 
 class Register extends Component {
   constructor() {
@@ -14,7 +14,7 @@ class Register extends Component {
     const password = event.target.elements.password.value;
     const confirmPassword = event.target.elements.confirmPassword.value;
     if (password !== confirmPassword) {
-      ShowErrorToast('passwords do not match');
+      showErrorToast('passwords do not match');
       return;
     }
 
@@ -36,10 +36,10 @@ class Register extends Component {
           throw Error(json.message);
         }
         //If success
-        ShowSuccessToast(json.message);
+        showSuccessToast(json.message);
       })
       .catch((error) => {
-        ShowErrorToast(error.message);
+        showErrorToast(error.message);
         return error;
       });
   }
