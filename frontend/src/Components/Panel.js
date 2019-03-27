@@ -5,10 +5,7 @@ import RightPanel from './RightPanel';
 class Panel extends Component {
   render() {
     return (
-      <div>
-        <h3>
-          This is Panel
-        </h3>
+      <div className="panel">
         <LeftPanel />
         <RightPanel />
       </div>

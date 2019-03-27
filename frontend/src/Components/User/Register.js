@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import toastr from 'toastr';
 import config from '../../config';
+import { ShowErrorToast, ShowSuccessToast } from '../../Helpers';
 
 class Register extends Component {
   constructor() {
@@ -14,13 +14,11 @@ class Register extends Component {
     const password = event.target.elements.password.value;
     const confirmPassword = event.target.elements.confirmPassword.value;
     if (password !== confirmPassword) {
-      toastr.clear();
-      setTimeout(() => toastr.error('passwords do not match'), 300);
+      ShowErrorToast('passwords do not match');
       return;
     }
 
     //Initialize api call to register user
-    //const url = 'http://127.0.0.1:5000/users';
     const url = `${config.URL}/users`;
     const request = {
       method: 'POST',
@@ -37,15 +35,11 @@ class Register extends Component {
         if (json.message !== 'user created successfully') {
           throw Error(json.message);
         }
-        //If success then show a success toast
-        toastr.clear();
-        setTimeout(() => toastr.success(json.message), 300);
+        //If success
+        ShowSuccessToast(json.message);
       })
-      //Catch error in response and show an error toast
       .catch((error) => {
-        console.log(error.message);
-        toastr.clear();
-        setTimeout(() => toastr.error(`${error.message}`), 300);
+        ShowErrorToast(error.message);
         return error;
       });
   }

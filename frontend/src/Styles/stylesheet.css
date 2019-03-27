@@ -86,3 +86,36 @@ a:link {
 a:visited {
     text-decoration: none;
 }
+
+.panel {
+    display: flex;
+    background-color: #7b8589;
+    height: 100%;
+}
+
+.left-panel {
+    height: 100%;
+    width: 10rem;
+    border-radius: 25px;
+    position: fixed;
+    left: 0;
+    background-color: #f2f2f2;
+    margin: 1rem;
+    margin-top: 2rem;
+}
+
+.right-panel {
+    height: 100%;
+    position: fixed;
+    width: calc(100% - 14rem);
+    border-radius: 25px;
+    right: 0;
+    background-color: #f2f2f2;
+    margin: 1rem;
+    margin-top: 2rem;
+}
+
+.header {
+    width: 100%;
+}
+

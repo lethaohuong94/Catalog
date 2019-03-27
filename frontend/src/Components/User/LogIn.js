@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import toastr from 'toastr';
+import { ShowErrorToast, ShowSuccessToast } from '../../Helpers';
 import config from '../../config';
 
 class LogIn extends Component {
@@ -14,7 +14,6 @@ class LogIn extends Component {
     const password = event.target.elements.password.value;
 
     //Initialize api request to authenticate user
-    //const url = 'http://127.0.0.1:5000/auth';
     const url = `${config.URL}/auth`;
     const request = {
       method: 'POST',
@@ -34,20 +33,18 @@ class LogIn extends Component {
         //If success then change state
         const token = json.access_token;
         const state = {
+          userId: json.id,
+          userName: name,
           loggedIn: true,
           accessToken: token,
-          id: json.id,
         };
-        const props = this.props;
-        props.onChangeState(state);
-        toastr.clear();
-        setTimeout(() => toastr.success('Log in successfully'), 300);
+        const { onChangeState } = this.props;
+        onChangeState(state);
+        ShowSuccessToast('Log in successfully');
       })
       //Catch error and show an error toast
       .catch((error) => {
-        console.log(error.message);
-        toastr.clear();
-        setTimeout(() => toastr.error(`${error.message}`), 300);
+        ShowErrorToast(error.message);
         return error;
       });
   }

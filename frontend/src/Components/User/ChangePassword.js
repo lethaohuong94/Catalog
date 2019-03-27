@@ -1,42 +1,37 @@
 import React, { Component } from 'react';
-import toastr from 'toastr';
+import { ShowErrorToast, ShowSuccessToast } from '../../Helpers';
 import config from '../../config';
 
 class ChangePassword extends Component {
   constructor() {
     super();
-    this.message = 'Please fill the form';
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    const props = this.props;
-    const name = event.target.elements.name.value;
+    const { userId, userName, accessToken } = this.props;
     const oldPassword = event.target.elements.oldPassword.value;
     const newPassword = event.target.elements.newPassword.value;
     const confirmPassword = event.target.elements.confirmPassword.value;
     if (newPassword !== confirmPassword) {
-      this.message = 'passwords do not match';
-      toastr.clear();
-      setTimeout(() => toastr.error(`${this.message}`), 300);
+      ShowErrorToast('Passwords do not match');
       return;
     }
 
     //Initialize requests
-    //const postUrl = 'http://127.0.0.1:5000/auth';
     const postUrl = `${config.URL}/auth`;
     const postRequest = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, password: oldPassword }),
+      body: JSON.stringify({ name: userName, password: oldPassword }),
     };
     const requestHeaders = new Headers({ 'Content-Type': 'application/json' });
-    requestHeaders.append('Authorization', `Bearer ${props.accessToken}`);
+    requestHeaders.append('Authorization', `Bearer ${accessToken}`);
     const putRequest = {
       method: 'PUT',
       headers: requestHeaders,
-      body: JSON.stringify({ name, password: newPassword }),
+      body: JSON.stringify({ name: userName, password: newPassword }),
     };
 
     fetch(postUrl, postRequest)
@@ -45,29 +40,24 @@ class ChangePassword extends Component {
         console.log(json);
         //If old password is invalid then show error toast
         if (!('access_token' in json)) {
-          toastr.clear();
-          setTimeout(() => toastr.error(`${json.message}`), 300);
+          ShowErrorToast(json.message);
           return;
         }
         //If success then make api call to change password
-        const putUrl = `http://127.0.0.1:5000/users/${json.id}`;
+        const putUrl = `${config.URL}/users/${userId}`;
         fetch(putUrl, putRequest)
           .then(response => response.json())
           .then((json) => {
             console.log(json);
             //If password is not updated then throw error
             if (json.message !== 'User updated successfully') {
-              throw Error(json.message);
+              ShowErrorToast(json.message);
             }
-            //If success then show success toast
-            toastr.clear();
-            setTimeout(() => toastr.success(json.message), 300);
+            //If success
+            ShowSuccessToast(json.message);
           })
-          //Catch error and show error toast
           .catch((error) => {
-            console.log(error.message);
-            toastr.clear();
-            setTimeout(() => toastr.error(`${error.message}`), 300);
+            ShowErrorToast(error.message);
           });
       });
   }
@@ -78,8 +68,7 @@ class ChangePassword extends Component {
         <h3>This is where user changes password</h3>
         <div className="form">
           <form onSubmit={this.handleSubmit}>
-            <h5>{this.message}</h5>
-            <input type="text" placeholder="Username" name="name" />
+            <h5>Please fill the form</h5>
             <input type="password" placeholder="Old Password" name="oldPassword" />
             <input type="password" placeholder="New Password" name="newPassword" />
             <input type="password" placeholder="Confirm New Password" name="confirmPassword" />
