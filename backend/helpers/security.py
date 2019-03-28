@@ -12,7 +12,7 @@ def encode(user):
     # iat -> now for readability
     now = datetime.datetime.utcnow()
     payload = {
-        'exp': now + datetime.timedelta(days=0, minutes=15),
+        'exp': now + datetime.timedelta(days=1, minutes=0),
         'iat': now,
         'id': user.id
     }

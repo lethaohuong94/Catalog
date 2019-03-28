@@ -19,7 +19,8 @@ def create_user(data):
     user = UserModel(**data)
     user.save_to_db()
     user = UserModel.find_by_name(data['name'])
-    return jsonify({'message': 'user created successfully', 'id': user.id}), 201
+    access_token = encode(user);
+    return jsonify({'message': 'user created successfully', 'id': user.id, 'access_token': access_token}), 201
 
 
 @user_api.route('/auth', methods=['POST'])

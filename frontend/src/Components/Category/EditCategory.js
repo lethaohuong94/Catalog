@@ -1,9 +1,9 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
+import { put } from '../../Helpers/fetchHelpers';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
-import { post } from '../../Helpers/fetchHelpers';
 
-class LogIn extends Component {
+class EditCategory extends Component {
   constructor() {
     super();
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -11,24 +11,17 @@ class LogIn extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    const { accessToken, categoryId } = this.props;
     const name = event.target.elements.name.value;
-    const password = event.target.elements.password.value;
 
-    post('/auth', { name, password })
+    put(`/categories/${categoryId}`, { name }, accessToken)
       .then((json) => {
-        if (!('access_token' in json)) {
+        if (!('id' in json)) {
           showErrorToast(json.message);
           return;
         }
-        const token = json.access_token;
-        const newState = {
-          userId: json.id,
-          userName: name,
-          loggedIn: true,
-          accessToken: token,
-        };
-        this.props.onChangeState(newState);
-        showSuccessToast('Log in successfully');
+        showSuccessToast('Category is successfully updated');
+        this.props.onEditCategory(json);
       })
       .catch((error) => {
         showErrorToast(error.message);
@@ -39,12 +32,12 @@ class LogIn extends Component {
   render() {
     return (
       <div>
+        <h3>Edit category</h3>
         <div className="form">
           <form onSubmit={this.handleSubmit}>
             <h5>Please fill the form</h5>
-            <input type="text" placeholder="Username" name="name" />
-            <input type="password" placeholder="Password" name="password" />
-            <button type="submit"> Log In </button>
+            <input type="text" placeholder="new name" name="name" />
+            <button type="submit"> Save change </button>
           </form>
         </div>
       </div>
@@ -52,4 +45,4 @@ class LogIn extends Component {
   }
 }
 
-export default LogIn;
+export default EditCategory;

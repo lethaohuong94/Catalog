@@ -6,6 +6,7 @@ class Header extends Component {
     const props = this.props;
     const newState = {
       loggedIn: false,
+      userId: 0,
       accessToken: '',
     };
 
@@ -16,8 +17,8 @@ class Header extends Component {
             <Link to="/">Catalog App</Link>
           </h1>
           <div className="button-container">
-            <Link className="header-button" to="/changepassword">Change Password</Link>
-            <button type="button" className="header-button" onClick={() => { props.onChangeState(newState); props.history.push('/'); }}>
+            <Link className="button" to="/changepassword">Change Password</Link>
+            <button type="button" className="button" onClick={() => { props.onChangeState(newState); props.history.push('/'); }}>
               Log out
             </button>
           </div>
@@ -31,8 +32,8 @@ class Header extends Component {
           <Link to="/">Catalog App</Link>
         </h1>
         <div className="button-container">
-          <Link className="header-button" to="/register">Register</Link>
-          <Link className="header-button" to="/login">Log in</Link>
+          <Link className="button" to="/register">Register</Link>
+          <Link className="button" to="/login">Log in</Link>
         </div>
       </div>
     );

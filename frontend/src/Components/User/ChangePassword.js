@@ -1,6 +1,8 @@
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
-import { showErrorToast, showSuccessToast } from '../../helpers';
-import { post, put } from '../../fetchHelpers';
+import { withRouter } from 'react-router-dom';
+import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
+import { post, put } from '../../Helpers/fetchHelpers';
 
 class ChangePassword extends Component {
   constructor() {
@@ -19,29 +21,19 @@ class ChangePassword extends Component {
       return;
     }
 
-    //Initialize requests
-    const postRequest = post('/auth', { name: userName, password: oldPassword });
-    const putRequest = put(`/users/${userId}`, { name: userName, password: newPassword }, accessToken);
-
-
-    fetch(postRequest.url, postRequest.request)
-      .then(response => response.json())
+    post('/auth', { name: userName, password: oldPassword })
       .then((json) => {
-        //If old password is invalid then show error toast
         if (!('access_token' in json)) {
           showErrorToast(json.message);
           return;
         }
-        //If success then make api call to change password
-        fetch(putRequest.url, putRequest.request)
-          .then(response => response.json())
+        put(`/users/${userId}`, { name: userName, password: newPassword }, accessToken)
           .then((json) => {
-            //If password is not updated then throw error
             if (json.message !== 'User updated successfully') {
               showErrorToast(json.message);
             }
-            //If success
             showSuccessToast(json.message);
+            this.props.history.push('/');
           })
           .catch((error) => {
             showErrorToast(error.message);
@@ -52,7 +44,6 @@ class ChangePassword extends Component {
   render() {
     return (
       <div>
-        <h3>This is where user changes password</h3>
         <div className="form">
           <form onSubmit={this.handleSubmit}>
             <h5>Please fill the form</h5>
@@ -67,4 +58,4 @@ class ChangePassword extends Component {
   }
 }
 
-export default ChangePassword;
+export default withRouter(ChangePassword);

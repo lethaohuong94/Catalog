@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { post } from '../../fetchHelpers';
-import { showErrorToast, showSuccessToast } from '../../helpers';
+import { post } from '../../Helpers/fetchHelpers';
+import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class Register extends Component {
   constructor() {
@@ -18,18 +18,23 @@ class Register extends Component {
       return;
     }
 
-    const request = post('/users', { name, password });
-
     //Make an api call to register user
-    fetch(request.url, request.request)
-      .then(response => response.json())
+    post('/users', { name, password })
       .then((json) => {
-        //If not success then throw error
         if (json.message !== 'user created successfully') {
-          throw Error(json.message);
+          showErrorToast(json.message);
+          return;
         }
-        //If success
         showSuccessToast(json.message);
+        const token = json.access_token;
+        const state = {
+          userId: json.id,
+          userName: name,
+          loggedIn: true,
+          accessToken: token,
+        };
+        const { onChangeState } = this.props;
+        onChangeState(state);
       })
       .catch((error) => {
         showErrorToast(error.message);
@@ -40,7 +45,6 @@ class Register extends Component {
   render() {
     return (
       <div>
-        <h3>This is where new user registers</h3>
         <div className="form">
           <form onSubmit={this.handleSubmit}>
             <h5>Please fill the form</h5>
