@@ -1,4 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 import { post } from '../../Helpers/fetchHelpers';
@@ -27,6 +26,7 @@ class LogIn extends Component {
           loggedIn: true,
           accessToken: token,
         };
+        // eslint-disable-next-line react/destructuring-assignment
         this.props.onChangeState(newState);
         showSuccessToast('Log in successfully');
       })

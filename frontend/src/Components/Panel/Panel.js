@@ -1,4 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';
@@ -28,10 +27,11 @@ class Panel extends Component {
   }
 
   render() {
+    const { categories, visiting } = this.state;
     return (
       <div className="panel">
-        <LeftPanel categories={this.state.categories} visiting={this.state.visiting} onChangeState={this.changeState} />
-        <RightPanel categories={this.state.categories} {...this.props} onChangeState={this.changeState} />
+        <LeftPanel categories={categories} visiting={visiting} onChangeState={this.changeState} />
+        <RightPanel categories={categories} {...this.props} onChangeState={this.changeState} />
       </div>
     );
   }

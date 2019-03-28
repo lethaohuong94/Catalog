@@ -1,4 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { put } from '../../Helpers/fetchHelpers';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
@@ -11,7 +10,7 @@ class EditCategory extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const { accessToken, categoryId } = this.props;
+    const { accessToken, categoryId, onEditCategory } = this.props;
     const name = event.target.elements.name.value;
 
     put(`/categories/${categoryId}`, { name }, accessToken)
@@ -21,7 +20,7 @@ class EditCategory extends Component {
           return;
         }
         showSuccessToast('Category is successfully updated');
-        this.props.onEditCategory(json);
+        onEditCategory(json);
       })
       .catch((error) => {
         showErrorToast(error.message);

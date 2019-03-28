@@ -18,7 +18,6 @@ class Register extends Component {
       return;
     }
 
-    //Make an api call to register user
     post('/users', { name, password })
       .then((json) => {
         if (json.message !== 'user created successfully') {

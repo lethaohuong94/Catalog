@@ -1,10 +1,5 @@
-/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
-import {
-  Route,
-  Switch,
-  Redirect,
-} from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import localStorage from 'local-storage';
 import Header from './Header';
 import Panel from './Panel/Panel';

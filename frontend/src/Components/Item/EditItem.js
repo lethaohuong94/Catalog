@@ -1,6 +1,4 @@
-/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
 import { put } from '../../Helpers/fetchHelpers';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 
@@ -12,7 +10,7 @@ class EditItem extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const { accessToken, itemId } = this.props;
+    const { accessToken, itemId, onEditItem } = this.props;
     const name = event.target.elements.name.value;
     const description = event.target.elements.description.value;
     const categoryId = event.target.elements.category.value;
@@ -24,7 +22,7 @@ class EditItem extends Component {
           return;
         }
         showSuccessToast('Item is successfully updated');
-        this.props.onEditItem({ id: json.id, name, description }, categoryId);
+        onEditItem({ id: json.id, name, description }, categoryId);
       })
       .catch((error) => {
         showErrorToast(error.message);
@@ -53,4 +51,4 @@ class EditItem extends Component {
   }
 }
 
-export default withRouter(EditItem);
+export default EditItem;

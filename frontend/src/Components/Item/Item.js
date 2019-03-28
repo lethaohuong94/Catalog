@@ -4,12 +4,7 @@
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 import React, { Component } from 'react';
-import {
-  Route,
-  Switch,
-  Redirect,
-  withRouter,
-} from 'react-router-dom';
+import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
 import ViewItem from './ViewItem';
 import AddItem from './AddItem';
 import EditItem from './EditItem';

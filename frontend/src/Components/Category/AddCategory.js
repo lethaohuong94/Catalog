@@ -1,6 +1,4 @@
-/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
 import { post } from '../../Helpers/fetchHelpers';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 
@@ -12,7 +10,7 @@ class AddCategory extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const { accessToken } = this.props;
+    const { accessToken, onAddCategory } = this.props;
     const name = event.target.elements.name.value;
 
     post('/categories', { name }, accessToken)
@@ -22,7 +20,7 @@ class AddCategory extends Component {
           return;
         }
         showSuccessToast('Category is successfully created');
-        this.props.onAddCategory(json);
+        onAddCategory(json);
       })
       .catch((error) => {
         showErrorToast(error.message);
@@ -45,4 +43,4 @@ class AddCategory extends Component {
   }
 }
 
-export default withRouter(AddCategory);
+export default AddCategory;

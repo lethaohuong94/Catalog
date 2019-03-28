@@ -14,9 +14,10 @@ class LeftPanel extends Component {
 
   handleClick(event, categoryId) {
     event.preventDefault();
-    const newState = { categories: this.props.categories, visiting: categoryId };
-    this.props.onChangeState(newState);
-    this.props.history.push(`/category/${categoryId}`);
+    const { categories, history, onChangeState } = this.props;
+    const newState = { categories, visiting: categoryId };
+    onChangeState(newState);
+    history.push(`/category/${categoryId}`);
   }
 
   render() {

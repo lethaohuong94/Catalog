@@ -1,4 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
@@ -23,16 +22,19 @@ class ChangePassword extends Component {
 
     post('/auth', { name: userName, password: oldPassword })
       .then((json) => {
+        //if old password is invalid then return
         if (!('access_token' in json)) {
           showErrorToast(json.message);
           return;
         }
+        //if old password is valid then change password
         put(`/users/${userId}`, { name: userName, password: newPassword }, accessToken)
           .then((json) => {
             if (json.message !== 'User updated successfully') {
               showErrorToast(json.message);
             }
             showSuccessToast(json.message);
+            // eslint-disable-next-line react/destructuring-assignment
             this.props.history.push('/');
           })
           .catch((error) => {

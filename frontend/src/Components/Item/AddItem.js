@@ -1,4 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { post } from '../../Helpers/fetchHelpers';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
@@ -11,7 +10,7 @@ class AddItem extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const { accessToken, categoryId } = this.props;
+    const { accessToken, categoryId, onAddItem } = this.props;
     const name = event.target.elements.name.value;
     const description = event.target.elements.description.value;
 
@@ -22,7 +21,7 @@ class AddItem extends Component {
           return;
         }
         showSuccessToast('Item is successfully created');
-        this.props.onAddItem({ id: json.id, name, description }, categoryId);
+        onAddItem({ id: json.id, name, description }, categoryId);
       })
       .catch((error) => {
         showErrorToast(error.message);
@@ -31,8 +30,6 @@ class AddItem extends Component {
   }
 
   render() {
-    const { categoryId } = this.props;
-    console.log(categoryId);
     return (
       <div>
         <h3>This is where a new item is created</h3>

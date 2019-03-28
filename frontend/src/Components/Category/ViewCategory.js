@@ -1,4 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { del } from '../../Helpers/fetchHelpers';
@@ -12,7 +11,7 @@ class ViewCategory extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const { accessToken, category } = this.props;
+    const { accessToken, category, onDeleteCategory } = this.props;
 
     del(`/categories/${category.id}`, accessToken)
       .then((json) => {
@@ -21,7 +20,7 @@ class ViewCategory extends Component {
           return;
         }
         showSuccessToast('Category is successfully deleted');
-        this.props.onDeleteCategory(category.id);
+        onDeleteCategory(category.id);
       })
       .catch((error) => {
         showErrorToast(error.message);
@@ -30,8 +29,7 @@ class ViewCategory extends Component {
   }
 
   render() {
-    const { category, userId } = this.props;
-    if (category) console.log(category);
+    const { category, userId, history } = this.props;
     if (category) {
       const numItem = category.items.length;
       if (userId === category.author_id) {
@@ -63,7 +61,7 @@ class ViewCategory extends Component {
     }
     return (
       <div>
-        {this.props.history.push('/')}
+        {history.push('/')}
       </div>
     );
   }
