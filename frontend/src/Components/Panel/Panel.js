@@ -21,19 +21,21 @@ class Panel extends Component {
   }
 
   changeState(newState) {
-    console.log('panel change state');
-    console.log(newState);
     this.setState(newState);
   }
 
   render() {
     const { categories, visiting } = this.state;
-    return (
-      <div className="panel">
-        <LeftPanel categories={categories} visiting={visiting} onChangeState={this.changeState} />
-        <RightPanel categories={categories} {...this.props} onChangeState={this.changeState} />
-      </div>
-    );
+    //if data is updated already then render panel
+    if (categories[0].id !== 0) {
+      return (
+        <div className="panel">
+          <LeftPanel categories={categories} visiting={visiting} onChangeState={this.changeState} />
+          <RightPanel categories={categories} {...this.props} onChangeState={this.changeState} />
+        </div>
+      );
+    }
+    return (<div />);
   }
 }
 

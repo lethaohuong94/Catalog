@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { del } from '../../Helpers/fetchHelpers';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 
@@ -29,10 +29,10 @@ class ViewItem extends Component {
   }
 
   render() {
-    const { category, itemId, history, userId } = this.props;
+    const { category, itemId, userId } = this.props;
     if (category) {
       const item = category.items.find(item => item.id === Number(itemId));
-      if (userId === item.author_id) {
+      if (item && userId === item.author_id) {
         return (
           <div>
             <div className="button-container">
@@ -40,37 +40,31 @@ class ViewItem extends Component {
               <button type="button" className="small-button" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this item?')) this.handleSubmit(e); }}>delete item</button>
             </div>
             <div>
-              {item
+              {/* {item
                 ? (<h3>{item.name}</h3>)
                 : (<h3>Item does not exist</h3>)
-            }
+              }
               {item
                 ? (<h5>{item.description}</h5>)
                 : (<h3>No description</h3>)
-            }
+              } */}
+              <h3>{item.name}</h3>
+              <h5>{item.description}</h5>
             </div>
           </div>
         );
       }
       return (
-        <div>
-          {item
-            ? (<h3>{item.name}</h3>)
-            : (<h3>Item does not exist</h3>)
-                }
-          {item
-            ? (<h5>{item.description}</h5>)
-            : (<h3>No description</h3>)
-                }
-        </div>
+        <div />
       );
     }
     return (
       <div>
-        {history.push('/')}
+        {/* {history.push('/')} */}
+        <Redirect to="/" />
       </div>
     );
   }
 }
 
-export default withRouter(ViewItem);
+export default ViewItem;

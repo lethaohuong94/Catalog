@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { del } from '../../Helpers/fetchHelpers';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 
@@ -29,7 +29,7 @@ class ViewCategory extends Component {
   }
 
   render() {
-    const { category, userId, history } = this.props;
+    const { category, userId } = this.props;
     if (category) {
       const numItem = category.items.length;
       if (userId === category.author_id) {
@@ -61,10 +61,10 @@ class ViewCategory extends Component {
     }
     return (
       <div>
-        {history.push('/')}
+        <Redirect to="/" />
       </div>
     );
   }
 }
 
-export default withRouter(ViewCategory);
+export default ViewCategory;
