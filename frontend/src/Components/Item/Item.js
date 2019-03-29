@@ -46,8 +46,7 @@ class Item extends Component {
   }
 
   render() {
-		const { categories, loggedIn, accessToken, userId } = this.props;
-		console.log(userId);
+    const { categories, loggedIn, accessToken, userId } = this.props;
     return (
       <div>
         <Switch>

@@ -32,8 +32,6 @@ class ViewItem extends Component {
     const { category, itemId, history, userId } = this.props;
     if (category) {
       const item = category.items.find(item => item.id === Number(itemId));
-      console.log(userId);
-      console.log(category.author_id);
       if (userId === category.author_id) {
         return (
           <div>
