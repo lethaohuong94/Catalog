@@ -40,14 +40,6 @@ class ViewItem extends Component {
               <button type="button" className="small-button" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this item?')) this.handleSubmit(e); }}>delete item</button>
             </div>
             <div>
-              {/* {item
-                ? (<h3>{item.name}</h3>)
-                : (<h3>Item does not exist</h3>)
-              }
-              {item
-                ? (<h5>{item.description}</h5>)
-                : (<h3>No description</h3>)
-              } */}
               <h3>{item.name}</h3>
               <h5>{item.description}</h5>
             </div>
@@ -60,7 +52,6 @@ class ViewItem extends Component {
     }
     return (
       <div>
-        {/* {history.push('/')} */}
         <Redirect to="/" />
       </div>
     );
