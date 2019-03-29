@@ -29,25 +29,41 @@ class ViewItem extends Component {
   }
 
   render() {
-    const { category, itemId, history } = this.props;
+    const { category, itemId, history, userId } = this.props;
     if (category) {
       const item = category.items.find(item => item.id === Number(itemId));
+      console.log(userId);
+      console.log(category.author_id);
+      if (userId === category.author_id) {
+        return (
+          <div>
+            <div className="button-container">
+              <Link className="small-button" to={`/category/${category.id}/item/${itemId}/edit`}>Edit Item</Link>
+              <button type="button" className="small-button" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this item?')) this.handleSubmit(e); }}>delete item</button>
+            </div>
+            <div>
+              {item
+                ? (<h3>{item.name}</h3>)
+                : (<h3>Item does not exist</h3>)
+            }
+              {item
+                ? (<h5>{item.description}</h5>)
+                : (<h3>No description</h3>)
+            }
+            </div>
+          </div>
+        );
+      }
       return (
         <div>
-          <div className="button-container">
-            <Link className="small-button" to={`/category/${category.id}/item/${itemId}/edit`}>Edit Item</Link>
-            <button type="button" className="small-button" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this item?')) this.handleSubmit(e); }}>delete item</button>
-          </div>
-          <div>
-            {item
-              ? (<h3>{item.name}</h3>)
-              : (<h3>Item does not exist</h3>)
-            }
-            {item
-              ? (<h5>{item.description}</h5>)
-              : (<h3>No description</h3>)
-            }
-          </div>
+          {item
+            ? (<h3>{item.name}</h3>)
+            : (<h3>Item does not exist</h3>)
+                }
+          {item
+            ? (<h5>{item.description}</h5>)
+            : (<h3>No description</h3>)
+                }
         </div>
       );
     }

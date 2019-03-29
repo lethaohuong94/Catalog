@@ -28,7 +28,7 @@ def create_item(data, user, category_id):
     # If item's name is not unique then raises error.
     item = ItemModel.find_by_name(data['name'])
     if item is not None:
-        raise BadRequestError('category already exists')
+        raise BadRequestError('item already exists')
 
     # If the request is valid, then new item is created, save, and returned.
     data.update([('category_id', category_id), ('author_id', user.id)])

@@ -46,7 +46,8 @@ class Item extends Component {
   }
 
   render() {
-    const { categories, loggedIn, accessToken } = this.props;
+		const { categories, loggedIn, accessToken, userId } = this.props;
+		console.log(userId);
     return (
       <div>
         <Switch>
@@ -57,6 +58,7 @@ class Item extends Component {
               itemId={params.match.params.itemid}
               category={categories.find(category => category.id === Number(params.match.params.categoryid))}
               onDeleteItem={this.deleteItem}
+              userId={userId}
             />}
           />
           <Route path="/category/:categoryid/item" exact render={params =>
