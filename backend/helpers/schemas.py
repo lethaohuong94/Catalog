@@ -13,7 +13,7 @@ class CategorySchema(Schema):
     id = fields.Int()
     name = fields.Str(required=True, validate=validate.Length(min=1))
     author_id = fields.Int()
-    items = fields.Nested(ItemSchema, only=('id', 'name', 'description'), many=True)
+    items = fields.Nested(ItemSchema, only=('id', 'name', 'description', 'author_id'), many=True)
 
 
 class UserSchema(Schema):

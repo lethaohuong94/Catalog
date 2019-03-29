@@ -13,7 +13,8 @@ class RightPanel extends Component {
         <Switch>
           <Route path="/category/:categoryid/item/" render={() => <Item {...this.props} />} />
           <Route path="/category/" render={() => <Category {...this.props} />} />
-          <Route render={() => <h3>Welcome to Catalog App</h3>} />
+          {/* <Route render={() => <h3>Welcome to Catalog App</h3>} /> */}
+          <Route path="/" exact render={() => <h3>Welcome to Catalog App</h3>} />
         </Switch>
       </div>
     );

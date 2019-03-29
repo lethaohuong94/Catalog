@@ -32,7 +32,7 @@ class ViewItem extends Component {
     const { category, itemId, history, userId } = this.props;
     if (category) {
       const item = category.items.find(item => item.id === Number(itemId));
-      if (userId === category.author_id) {
+      if (userId === item.author_id) {
         return (
           <div>
             <div className="button-container">

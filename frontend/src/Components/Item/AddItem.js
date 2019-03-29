@@ -21,7 +21,7 @@ class AddItem extends Component {
           return;
         }
         showSuccessToast('Item is successfully created');
-        onAddItem({ id: json.id, name, description }, categoryId);
+        onAddItem({ id: json.id, name, description, author_id: json.author_id }, categoryId);
       })
       .catch((error) => {
         showErrorToast(error.message);
