@@ -46,6 +46,16 @@ class ViewItem extends Component {
           </div>
         );
       }
+      if (item && userId !== item.author_id) {
+        return (
+          <div>
+            <div>
+              <h3>{item.name}</h3>
+              <h5>{item.description}</h5>
+            </div>
+          </div>
+        );
+      }
       return (
         <div />
       );
