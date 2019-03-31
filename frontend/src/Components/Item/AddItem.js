@@ -3,8 +3,8 @@ import { post } from '../../Helpers/fetchHelpers';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class AddItem extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 

@@ -4,8 +4,8 @@ import { del } from '../../Helpers/fetchHelpers';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class ViewCategory extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -42,7 +42,7 @@ class ViewCategory extends Component {
             </div>
             <h3>{`There are ${numItem} items in category ${category.name}`}</h3>
             <ul>
-              {category.items.sort((x, y) => y.id - x.id).map(item => <li key={item.id}><Link to={`/category/${category.id}/item/${item.id}`}>{item.name}</Link></li>)}
+              {category.items.map(item => <li key={item.id}><Link to={`/category/${category.id}/item/${item.id}`}>{item.name}</Link></li>)}
             </ul>
           </div>
         );

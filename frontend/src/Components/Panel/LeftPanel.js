@@ -7,8 +7,8 @@ import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 
 class LeftPanel extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.handleClick = this.handleClick.bind(this);
   }
 
@@ -21,13 +21,12 @@ class LeftPanel extends Component {
   }
 
   render() {
-    const { visiting } = this.props;
+    const { categories, visiting } = this.props;
     return (
       <div className="left-panel">
         <div className="button-container"><Link className="small-button" to="/category/new">Add Category</Link></div>
         <ul>
-          {this.props.categories
-            .sort((x, y) => y.id - x.id)
+          {categories
             .map(category =>
               <li key={category.id} style={{ background: (category.id === visiting ? '#0658845e' : null) }}>
                 <Link to={`/category/${category.id}`} key={category.id} className="category" onClick={event => this.handleClick(event, category.id)}>{category.name}</Link>

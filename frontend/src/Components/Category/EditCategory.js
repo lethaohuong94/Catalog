@@ -3,8 +3,8 @@ import { put } from '../../Helpers/fetchHelpers';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class EditCategory extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 

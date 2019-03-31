@@ -10,8 +10,8 @@ import AddItem from './AddItem';
 import EditItem from './EditItem';
 
 class Item extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.categories = [];
     this.addItem = this.addItem.bind(this);
     this.deleteItem = this.deleteItem.bind(this);
@@ -46,7 +46,8 @@ class Item extends Component {
   }
 
   render() {
-    const { categories, loggedIn, accessToken, userId } = this.props;
+    const { categories, user } = this.props;
+    const { loggedIn, accessToken, userId } = user;
     return (
       <div>
         <Switch>

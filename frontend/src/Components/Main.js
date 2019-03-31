@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import localStorage from 'local-storage';
@@ -8,14 +9,15 @@ import LogIn from './User/LogIn';
 import ChangePassword from './User/ChangePassword';
 
 class Main extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      userId: 0,
-      userName: '',
-      loggedIn: false,
-      accessToken: 'token',
-    };
+      user: {
+        userId: 0,
+        userName: '',
+        loggedIn: false,
+        accessToken: '',
+      } };
     this.changeState = this.changeState.bind(this);
   }
 
@@ -29,15 +31,15 @@ class Main extends Component {
   }
 
   render() {
-    const { loggedIn } = this.state;
+    const { loggedIn } = this.state.user;
     return (
       <div>
-        <Header {...this.state} onChangeState={this.changeState} />
+        <Header user={this.state.user} onChangeState={this.changeState} />
         <Switch>
           <Route path="/register" exact render={() => (loggedIn ? <Redirect to="/" /> : <Register onChangeState={this.changeState} />)} />
           <Route path="/login" exact render={() => (loggedIn ? <Redirect to="/" /> : <LogIn onChangeState={this.changeState} />)} />
-          <Route path="/changepassword" exact render={() => (loggedIn ? <ChangePassword {...this.state} /> : <Redirect to="/login" />)} />
-          <Route render={() => <Panel {...this.state} />} />
+          <Route path="/changepassword" exact render={() => (loggedIn ? <ChangePassword user={this.state.user} /> : <Redirect to="/login" />)} />
+          <Route render={() => <Panel user={this.state.user} />} />
         </Switch>
       </div>
     );

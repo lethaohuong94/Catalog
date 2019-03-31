@@ -3,8 +3,8 @@ import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 import { post } from '../../Helpers/fetchHelpers';
 
 class LogIn extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -21,11 +21,12 @@ class LogIn extends Component {
         }
         const token = json.access_token;
         const newState = {
-          userId: json.id,
-          userName: name,
-          loggedIn: true,
-          accessToken: token,
-        };
+          user: {
+            userId: json.id,
+            userName: name,
+            loggedIn: true,
+            accessToken: token,
+          } };
         // eslint-disable-next-line react/destructuring-assignment
         this.props.onChangeState(newState);
         showSuccessToast('Log in successfully');

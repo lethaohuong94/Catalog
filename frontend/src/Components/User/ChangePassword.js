@@ -1,17 +1,18 @@
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 import { post, put } from '../../Helpers/fetchHelpers';
 
 class ChangePassword extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    const { userId, userName, accessToken } = this.props;
+    const { userId, userName, accessToken } = this.props.user;
     const oldPassword = event.target.elements.oldPassword.value;
     const newPassword = event.target.elements.newPassword.value;
     const confirmPassword = event.target.elements.confirmPassword.value;
@@ -34,7 +35,6 @@ class ChangePassword extends Component {
               showErrorToast(json.message);
             }
             showSuccessToast(json.message);
-            // eslint-disable-next-line react/destructuring-assignment
             this.props.history.push('/');
           })
           .catch((error) => {

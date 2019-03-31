@@ -3,8 +3,8 @@ import { post } from '../../Helpers/fetchHelpers';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class Register extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -27,11 +27,12 @@ class Register extends Component {
         showSuccessToast(json.message);
         const token = json.access_token;
         const state = {
-          userId: json.id,
-          userName: name,
-          loggedIn: true,
-          accessToken: token,
-        };
+          user: {
+            userId: json.id,
+            userName: name,
+            loggedIn: true,
+            accessToken: token,
+          } };
         const { onChangeState } = this.props;
         onChangeState(state);
       })
@@ -42,6 +43,7 @@ class Register extends Component {
   }
 
   render() {
+    console.log('register');
     return (
       <div>
         <div className="form">

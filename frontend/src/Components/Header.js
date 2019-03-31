@@ -3,14 +3,16 @@ import { Link, withRouter } from 'react-router-dom';
 
 class Header extends Component {
   render() {
-    const props = this.props;
+    const { user, onChangeState, history } = this.props;
     const newState = {
-      loggedIn: false,
-      userId: 0,
-      accessToken: '',
-    };
+      user: {
+        loggedIn: false,
+        userId: 1,
+        userName: '',
+        accessToken: '',
+      } };
 
-    if (props.loggedIn) {
+    if (user.loggedIn) {
       return (
         <div className="header">
           <h1>
@@ -18,7 +20,7 @@ class Header extends Component {
           </h1>
           <div className="button-container">
             <Link className="button" to="/changepassword">Change Password</Link>
-            <button type="button" className="button" onClick={() => { props.onChangeState(newState); props.history.push('/'); }}>
+            <button type="button" className="button" onClick={() => { onChangeState(newState); history.push('/'); }}>
               Log out
             </button>
           </div>

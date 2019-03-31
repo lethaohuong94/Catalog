@@ -4,8 +4,8 @@ import RightPanel from './RightPanel';
 import { get } from '../../Helpers/fetchHelpers';
 
 class Panel extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       categories: [{ id: 0, items: [] }],
       visiting: 0,
@@ -26,12 +26,13 @@ class Panel extends Component {
 
   render() {
     const { categories, visiting } = this.state;
+    const { user } = this.props;
     //if data is updated already then render panel
     if (categories[0].id !== 0) {
       return (
         <div className="panel">
           <LeftPanel categories={categories} visiting={visiting} onChangeState={this.changeState} />
-          <RightPanel categories={categories} {...this.props} onChangeState={this.changeState} />
+          <RightPanel categories={categories} user={user} onChangeState={this.changeState} />
         </div>
       );
     }

@@ -11,8 +11,8 @@ import AddCategory from './AddCategory';
 import EditCategory from './EditCategory';
 
 class Category extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.categories = [];
     this.addCategory = this.addCategory.bind(this);
     this.deleteCategory = this.deleteCategory.bind(this);
@@ -48,7 +48,8 @@ class Category extends Component {
   }
 
   render() {
-    const { categories, loggedIn, userId, accessToken } = this.props;
+    const { categories, user } = this.props;
+    const { loggedIn, userId, accessToken } = user;
     return (
       <div>
         <Switch>
