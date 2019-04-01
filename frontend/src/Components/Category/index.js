@@ -64,7 +64,7 @@ class Category extends Component {
             loggedIn
               ? <EditCategory
                 accessToken={accessToken}
-                categoryId={params.match.params.id}
+                category={categories.find(category => category.id === Number(params.match.params.id))}
                 onEditCategory={this.editCategory}
               />
               : <Redirect to="/login" />)}
