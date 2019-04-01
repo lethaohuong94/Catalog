@@ -28,34 +28,42 @@ class ViewCategory extends Component {
       });
   }
 
-  render() {
+  renderButtonField() {
     const { category, userId } = this.props;
+    if (userId === category.author_id) {
+      return (
+        <div className="button-container">
+          <Link className="small-button" to={`/category/${category.id}/edit`}>Edit Category</Link>
+          <button type="button" className="small-button" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this category?')) this.handleSubmit(e); }}>delete category</button>
+        </div>
+      );
+    }
+    return (
+      <div className="button-container">
+        <Link className="small-button" to={`/category/${category.id}/item`}>Add Item</Link>
+      </div>
+    );
+  }
+
+  renderItemList() {
+    const { category } = this.props;
+    return (
+      <div>
+        <h3>{`There are ${category.items.length} items in category ${category.name}`}</h3>
+        <ul>
+          {category.items.sort((x, y) => y.id - x.id).map(item => <li key={item.id}><Link to={`/category/${category.id}/item/${item.id}`}>{item.name}</Link></li>)}
+        </ul>
+      </div>
+    );
+  }
+
+  render() {
+    const { category } = this.props;
     if (category) {
-      const numItem = category.items.length;
-      if (userId === category.author_id) {
-        return (
-          <div>
-            <div className="button-container">
-              <Link className="small-button" to={`/category/${category.id}/edit`}>Edit Category</Link>
-              <Link className="small-button" to={`/category/${category.id}/item`}>Add Item</Link>
-              <button type="button" className="small-button" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this category?')) this.handleSubmit(e); }}>delete category</button>
-            </div>
-            <h3>{`There are ${numItem} items in category ${category.name}`}</h3>
-            <ul>
-              {category.items.map(item => <li key={item.id}><Link to={`/category/${category.id}/item/${item.id}`}>{item.name}</Link></li>)}
-            </ul>
-          </div>
-        );
-      }
       return (
         <div>
-          <div className="button-container">
-            <Link className="small-button" to={`/category/${category.id}/item`}>Add Item</Link>
-          </div>
-          <h3>{`There are ${numItem} items in category ${category.name}`}</h3>
-          <ul>
-            {category.items.sort((x, y) => y.id - x.id).map(item => <li key={item.id}><Link to={`/category/${category.id}/item/${item.id}`}>{item.name}</Link></li>)}
-          </ul>
+          {this.renderButtonField()}
+          {this.renderItemList()}
         </div>
       );
     }

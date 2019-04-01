@@ -28,37 +28,40 @@ class ViewItem extends Component {
       });
   }
 
-  render() {
+  renderButtonField(item) {
     const { category, itemId, userId } = this.props;
+    if (userId === item.author_id) {
+      return (
+        <div className="button-container">
+          <Link className="small-button" to={`/category/${category.id}/item/${itemId}/edit`}>Edit Item</Link>
+          <button type="button" className="small-button" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this item?')) this.handleSubmit(e); }}>delete item</button>
+        </div>
+      );
+    }
+    return <div />;
+  }
+
+  renderTextField(item) {
+    return (
+      <div>
+        <h3>{item.name}</h3>
+        <h5>{item.description}</h5>
+      </div>
+    );
+  }
+
+  render() {
+    const { category, itemId } = this.props;
     if (category) {
       const item = category.items.find(item => item.id === Number(itemId));
-      if (item && userId === item.author_id) {
+      if (item) {
         return (
           <div>
-            <div className="button-container">
-              <Link className="small-button" to={`/category/${category.id}/item/${itemId}/edit`}>Edit Item</Link>
-              <button type="button" className="small-button" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this item?')) this.handleSubmit(e); }}>delete item</button>
-            </div>
-            <div>
-              <h3>{item.name}</h3>
-              <h5>{item.description}</h5>
-            </div>
+            {this.renderButtonField(item)}
+            {this.renderTextField(item)}
           </div>
         );
       }
-      if (item && userId !== item.author_id) {
-        return (
-          <div>
-            <div>
-              <h3>{item.name}</h3>
-              <h5>{item.description}</h5>
-            </div>
-          </div>
-        );
-      }
-      return (
-        <div />
-      );
     }
     return (
       <div>
