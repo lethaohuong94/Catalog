@@ -3,10 +3,25 @@ import { post } from '../../Helpers/fetchHelpers';
 import { showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class AddCategory extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { name: '' };
+  }
+
+  handleChangeName(event) {
+    this.setState({ name: event.target.value });
+  }
+
+  handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      this.handleSubmit(event);
+    }
+  }
+
   handleSubmit(event) {
     event.preventDefault();
     const { accessToken, onAddCategory } = this.props;
-    const name = event.target.elements.name.value;
+    const { name } = this.state;
 
     post('/categories', { name }, accessToken)
       .then((response) => {
@@ -21,12 +36,10 @@ class AddCategory extends Component {
     return (
       <div>
         <h3>This is where a category is created</h3>
-        <div className="form">
-          <form onSubmit={e => this.handleSubmit(e)}>
-            <h5>Please fill the form</h5>
-            <input type="text" placeholder="Category name" name="name" />
-            <button type="submit"> Add </button>
-          </form>
+        <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
+          <h5>Please fill the form</h5>
+          <input type="text" placeholder="Category name" onChange={e => this.handleChangeName(e)} />
+          <button type="submit" onClick={e => this.handleSubmit(e)}> Add </button>
         </div>
       </div>
     );

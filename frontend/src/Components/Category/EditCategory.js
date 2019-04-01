@@ -6,19 +6,21 @@ import { showSuccessToast } from '../../Helpers/toasterHelpers';
 class EditCategory extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      name: '',
-    };
-    const { category } = this.props;
-    if (category) this.state = { name: category.name };
+    this.state = { name: '' };
+    if (this.props.category) this.state = { name: this.props.category.name };
   }
 
   handleChangeName(event) {
     this.setState({ name: event.target.value });
   }
 
-  handleSubmit(event) {
-    event.preventDefault();
+  handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      this.handleSubmit(event);
+    }
+  }
+
+  handleSubmit() {
     const { accessToken, category, onEditCategory } = this.props;
     const { name } = this.state;
 
@@ -34,12 +36,10 @@ class EditCategory extends Component {
     return (
       <div>
         <h3>Edit category</h3>
-        <div className="form">
-          <form onSubmit={e => this.handleSubmit(e)}>
-            <h5>Please fill the form</h5>
-            <input type="text" placeholder="new name" name="name" value={this.state.name} onChange={e => this.handleChangeName(e)} />
-            <button type="submit"> Save change </button>
-          </form>
+        <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
+          <h5>Please fill the form</h5>
+          <input type="text" placeholder="new name" value={this.state.name} onChange={e => this.handleChangeName(e)} />
+          <button type="submit" onClick={e => this.handleSubmit(e)}> Save change </button>
         </div>
       </div>
     );
