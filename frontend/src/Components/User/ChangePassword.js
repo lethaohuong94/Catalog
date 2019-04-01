@@ -4,11 +4,6 @@ import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 import { post, put } from '../../Helpers/fetchHelpers';
 
 class ChangePassword extends Component {
-  constructor(props) {
-    super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
   handleSubmit(event) {
     event.preventDefault();
     const { user, history } = this.props;
@@ -39,7 +34,7 @@ class ChangePassword extends Component {
     return (
       <div>
         <div className="form">
-          <form onSubmit={this.handleSubmit}>
+          <form onSubmit={e => this.handleSubmit(e)}>
             <h5>Please fill the form</h5>
             <input type="password" placeholder="Old Password" name="oldPassword" />
             <input type="password" placeholder="New Password" name="newPassword" />

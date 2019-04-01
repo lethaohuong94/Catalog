@@ -3,11 +3,6 @@ import { post } from '../../Helpers/fetchHelpers';
 import { showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class AddCategory extends Component {
-  constructor(props) {
-    super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
   handleSubmit(event) {
     event.preventDefault();
     const { accessToken, onAddCategory } = this.props;
@@ -27,7 +22,7 @@ class AddCategory extends Component {
       <div>
         <h3>This is where a category is created</h3>
         <div className="form">
-          <form onSubmit={this.handleSubmit}>
+          <form onSubmit={e => this.handleSubmit(e)}>
             <h5>Please fill the form</h5>
             <input type="text" placeholder="Category name" name="name" />
             <button type="submit"> Add </button>

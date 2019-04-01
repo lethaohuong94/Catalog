@@ -4,11 +4,6 @@ import { del } from '../../Helpers/fetchHelpers';
 import { showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class ViewCategory extends Component {
-  constructor(props) {
-    super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
   handleSubmit(event) {
     event.preventDefault();
     const { accessToken, category, onDeleteCategory } = this.props;

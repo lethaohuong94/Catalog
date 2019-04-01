@@ -11,11 +11,9 @@ class EditCategory extends Component {
     };
     const { category } = this.props;
     if (category) this.state = { name: category.name };
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange(event) {
+  handleChangeName(event) {
     this.setState({ name: event.target.value });
   }
 
@@ -37,9 +35,9 @@ class EditCategory extends Component {
       <div>
         <h3>Edit category</h3>
         <div className="form">
-          <form onSubmit={this.handleSubmit}>
+          <form onSubmit={e => this.handleSubmit(e)}>
             <h5>Please fill the form</h5>
-            <input type="text" placeholder="new name" name="name" value={this.state.name} onChange={this.handleChange} />
+            <input type="text" placeholder="new name" name="name" value={this.state.name} onChange={e => this.handleChangeName(e)} />
             <button type="submit"> Save change </button>
           </form>
         </div>

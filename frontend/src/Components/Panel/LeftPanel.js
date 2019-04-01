@@ -2,11 +2,6 @@ import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 
 class LeftPanel extends Component {
-  constructor(props) {
-    super(props);
-    this.handleClick = this.handleClick.bind(this);
-  }
-
   handleClick(event, categoryId) {
     event.preventDefault();
     const { categories, history, onChangeState } = this.props;
@@ -23,7 +18,7 @@ class LeftPanel extends Component {
         <ul>
           {categories.map(category => (
             <li key={category.id} style={{ background: (category.id === visiting ? '#0658845e' : null) }}>
-              <Link to={`/category/${category.id}`} key={category.id} className="category" onClick={event => this.handleClick(event, category.id)}>{category.name}</Link>
+              <Link to={`/category/${category.id}`} key={category.id} className="category" onClick={e => this.handleClick(e, category.id)}>{category.name}</Link>
             </li>
           ))}
         </ul>

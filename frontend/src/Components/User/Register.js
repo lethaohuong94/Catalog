@@ -3,11 +3,6 @@ import { post } from '../../Helpers/fetchHelpers';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class Register extends Component {
-  constructor(props) {
-    super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
   handleSubmit(event) {
     event.preventDefault();
     const name = event.target.elements.name.value;
@@ -38,7 +33,7 @@ class Register extends Component {
     return (
       <div>
         <div className="form">
-          <form onSubmit={this.handleSubmit}>
+          <form onSubmit={e => this.handleSubmit(e)}>
             <h5>Please fill the form</h5>
             <input type="text" placeholder="Username" name="name" />
             <input type="password" placeholder="Password" name="password" />

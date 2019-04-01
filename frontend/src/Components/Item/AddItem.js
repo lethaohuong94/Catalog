@@ -3,11 +3,6 @@ import { post } from '../../Helpers/fetchHelpers';
 import { showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class AddItem extends Component {
-  constructor(props) {
-    super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
   handleSubmit(event) {
     event.preventDefault();
     const { accessToken, categoryId, onAddItem } = this.props;
@@ -27,7 +22,7 @@ class AddItem extends Component {
       <div>
         <h3>This is where a new item is created</h3>
         <div className="form">
-          <form onSubmit={this.handleSubmit}>
+          <form onSubmit={e => this.handleSubmit(e)}>
             <h5>Please fill the form</h5>
             <input type="text" placeholder="Item name" name="name" />
             <input type="text" placeholder="Item description" name="description" />
