@@ -43,7 +43,6 @@ class Register extends Component {
   }
 
   render() {
-    console.log('register');
     return (
       <div>
         <div className="form">

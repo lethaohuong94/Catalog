@@ -22,7 +22,6 @@ class EditCategory extends Component {
   handleSubmit(event) {
     event.preventDefault();
     const { accessToken, category, onEditCategory } = this.props;
-    //const name = event.target.elements.name.value;
     const { name } = this.state;
 
     put(`/categories/${category.id}`, { name }, accessToken)
