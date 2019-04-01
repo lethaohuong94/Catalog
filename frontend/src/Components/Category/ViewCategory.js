@@ -15,14 +15,9 @@ class ViewCategory extends Component {
 
     del(`/categories/${category.id}`, accessToken)
       .then((response) => {
-        // if (json.message !== 'Category deleted') {
-        //   showErrorToast(json.message);
-        //   return;
-        // }
-        if (response.successful) {
-          showSuccessToast('Category is successfully deleted');
-          onDeleteCategory(category.id);
-        }
+        if (!response.successful) return;
+        showSuccessToast('Category is successfully deleted');
+        onDeleteCategory(category.id);
       });
   }
 

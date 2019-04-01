@@ -28,10 +28,9 @@ class ChangePassword extends Component {
         if (!response.successful) return;
         put(`/users/${userId}`, { name: userName, password: newPassword }, accessToken)
           .then((response) => {
-            if (response.successful) {
-              showSuccessToast('User updated successfully');
-              history.push('/');
-            }
+            if (!response.successful) return;
+            showSuccessToast('User updated successfully');
+            history.push('/');
           });
       });
   }

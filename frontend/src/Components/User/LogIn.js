@@ -16,22 +16,16 @@ class LogIn extends Component {
 
     post('/auth', { name, password })
       .then((response) => {
-        // if (!('access_token' in json)) {
-        //   showErrorToast(json.message);
-        //   return;
-        // }
-        if (response.successful) {
-          const token = response.access_token;
-          const newState = {
-            user: {
-              userId: response.id,
-              userName: name,
-              loggedIn: true,
-              accessToken: token,
-            } };
-          this.props.onChangeState(newState);
-          showSuccessToast('Log in successfully');
-        }
+        if (!response.successful) return;
+        const newState = {
+          user: {
+            userId: response.id,
+            userName: name,
+            loggedIn: true,
+            accessToken: response.access_token,
+          } };
+        this.props.onChangeState(newState);
+        showSuccessToast('Log in successfully');
       });
   }
 

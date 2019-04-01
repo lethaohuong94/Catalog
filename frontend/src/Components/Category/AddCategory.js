@@ -15,11 +15,10 @@ class AddCategory extends Component {
 
     post('/categories', { name }, accessToken)
       .then((response) => {
-        if (response.successful) {
-          showSuccessToast('Category is successfully created');
-          delete response.successful;
-          onAddCategory(response);
-        }
+        if (!response.successful) return;
+        showSuccessToast('Category is successfully created');
+        delete response.successful;
+        onAddCategory(response);
       });
   }
 

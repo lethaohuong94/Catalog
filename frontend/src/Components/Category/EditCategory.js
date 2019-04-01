@@ -26,14 +26,9 @@ class EditCategory extends Component {
 
     put(`/categories/${category.id}`, { name }, accessToken)
       .then((response) => {
-        // if (!('id' in json)) {
-        //   showErrorToast(json.message);
-        //   return;
-        // }
-        if (response.successful) {
-          showSuccessToast('Category is successfully updated');
-          onEditCategory(response);
-        }
+        if (!response.successful) return;
+        showSuccessToast('Category is successfully updated');
+        onEditCategory(response);
       });
   }
 

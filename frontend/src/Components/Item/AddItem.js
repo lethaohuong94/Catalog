@@ -16,10 +16,9 @@ class AddItem extends Component {
 
     post(`/categories/${categoryId}/items`, { name, description }, accessToken)
       .then((response) => {
-        if (response.successful) {
-          showSuccessToast('Item is successfully created');
-          onAddItem({ id: response.id, name, description, author_id: response.author_id }, categoryId);
-        }
+        if (!response.successful) return;
+        showSuccessToast('Item is successfully created');
+        onAddItem({ id: response.id, name, description, author_id: response.author_id }, categoryId);
       });
   }
 

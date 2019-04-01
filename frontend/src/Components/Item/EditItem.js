@@ -17,10 +17,9 @@ class EditItem extends Component {
 
     put(`/categories/${categoryId}/items/${itemId}`, { name, description }, accessToken)
       .then((response) => {
-        if (response.successful) {
-          showSuccessToast('Item is successfully updated');
-          onEditItem({ id: response.id, name, description, author_id: response.author_id }, categoryId);
-        }
+        if (!response.successful) return;
+        showSuccessToast('Item is successfully updated');
+        onEditItem({ id: response.id, name, description, author_id: response.author_id }, categoryId);
       });
   }
 

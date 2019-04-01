@@ -16,10 +16,9 @@ class ViewItem extends Component {
 
     del(`/items/${itemId}`, accessToken)
       .then((response) => {
-        if (response.successful) {
-          showSuccessToast('Item is successfully deleted');
-          onDeleteItem(itemId, category.id);
-        }
+        if (!response.successful) return;
+        showSuccessToast('Item is successfully deleted');
+        onDeleteItem(itemId, category.id);
       });
   }
 
