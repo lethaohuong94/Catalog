@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import localStorage from 'local-storage';
 import Header from './Header';
-import Panel from './Panel/Panel';
+import Panel from './Panel';
 import Register from './User/Register';
 import LogIn from './User/LogIn';
 import ChangePassword from './User/ChangePassword';
@@ -18,11 +18,8 @@ class Main extends Component {
         loggedIn: false,
         accessToken: '',
       } };
+    this.state.user = localStorage.get('state').user;
     this.changeState = this.changeState.bind(this);
-  }
-
-  componentDidMount() {
-    this.setState(localStorage.get('state'));
   }
 
   changeState(newState) {
@@ -32,6 +29,7 @@ class Main extends Component {
 
   render() {
     const { loggedIn } = this.state.user;
+    console.log(loggedIn);
     return (
       <div>
         <Header user={this.state.user} onChangeState={this.changeState} />

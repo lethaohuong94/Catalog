@@ -3,8 +3,8 @@ import {
   Route,
   Switch,
 } from 'react-router-dom';
-import Item from '../Item/Item';
-import Category from '../Category/Category';
+import Item from '../Item';
+import Category from '../Category';
 
 class RightPanel extends Component {
   render() {

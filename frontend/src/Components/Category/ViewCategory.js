@@ -30,17 +30,11 @@ class ViewCategory extends Component {
 
   renderButtonField() {
     const { category, userId } = this.props;
-    if (userId === category.author_id) {
-      return (
-        <div className="button-container">
-          <Link className="small-button" to={`/category/${category.id}/edit`}>Edit Category</Link>
-          <button type="button" className="small-button" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this category?')) this.handleSubmit(e); }}>delete category</button>
-        </div>
-      );
-    }
     return (
       <div className="button-container">
+        {(userId === category.author_id) && <Link className="small-button" to={`/category/${category.id}/edit`}>Edit Category</Link>}
         <Link className="small-button" to={`/category/${category.id}/item`}>Add Item</Link>
+        {(userId === category.author_id) && <button type="button" className="small-button" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this category?')) this.handleSubmit(e); }}>delete category</button>}
       </div>
     );
   }
@@ -50,8 +44,9 @@ class ViewCategory extends Component {
     return (
       <div>
         <h3>{`There are ${category.items.length} items in category ${category.name}`}</h3>
+        <h5>{`category's author: ${category.author_id}`}</h5>
         <ul>
-          {category.items.sort((x, y) => y.id - x.id).map(item => <li key={item.id}><Link to={`/category/${category.id}/item/${item.id}`}>{item.name}</Link></li>)}
+          {category.items.map(item => <li key={item.id}><Link to={`/category/${category.id}/item/${item.id}`}>{item.name}</Link></li>)}
         </ul>
       </div>
     );

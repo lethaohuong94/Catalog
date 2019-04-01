@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-wrap-multilines */
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable react/jsx-one-expression-per-line */
-/* eslint-disable react/destructuring-assignment */
 
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';

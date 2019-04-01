@@ -7,7 +7,7 @@ class Header extends Component {
     const newState = {
       user: {
         loggedIn: false,
-        userId: 1,
+        userId: 0,
         userName: '',
         accessToken: '',
       } };
@@ -23,6 +23,7 @@ class Header extends Component {
             <button type="button" className="button" onClick={() => { onChangeState(newState); history.push('/'); }}>
               Log out
             </button>
+            <h5>{`user id: ${user.userId}`}</h5>
           </div>
         </div>
       );

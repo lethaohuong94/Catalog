@@ -46,6 +46,7 @@ class ViewItem extends Component {
       <div>
         <h3>{item.name}</h3>
         <h5>{item.description}</h5>
+        <h5>{`item's author: ${item.author_id}`}</h5>
       </div>
     );
   }
