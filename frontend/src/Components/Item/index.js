@@ -17,6 +17,7 @@ class Item extends Component {
     this.editItem = this.editItem.bind(this);
   }
 
+  //save index into separate array
   indexFromId(categoryId) {
     this.categories = this.props.categories;
     return this.categories.findIndex(category => category.id === Number(categoryId));

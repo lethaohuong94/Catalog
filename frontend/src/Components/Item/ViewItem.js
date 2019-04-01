@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { del } from '../../Helpers/fetchHelpers';
-import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
+import { showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class ViewItem extends Component {
   constructor() {
@@ -9,22 +9,17 @@ class ViewItem extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  //change function name
   handleSubmit(event) {
     event.preventDefault();
     const { accessToken, category, itemId, onDeleteItem } = this.props;
 
     del(`/items/${itemId}`, accessToken)
-      .then((json) => {
-        if (json.message !== 'Item deleted') {
-          showErrorToast(json.message);
-          return;
+      .then((response) => {
+        if (response.successful) {
+          showSuccessToast('Item is successfully deleted');
+          onDeleteItem(itemId, category.id);
         }
-        showSuccessToast('Item is successfully deleted');
-        onDeleteItem(itemId, category.id);
-      })
-      .catch((error) => {
-        showErrorToast(error.message);
-        return error;
       });
   }
 

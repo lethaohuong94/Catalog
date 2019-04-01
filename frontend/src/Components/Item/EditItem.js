@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { put } from '../../Helpers/fetchHelpers';
-import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
+import { showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class EditItem extends Component {
   constructor(props) {
@@ -16,17 +16,11 @@ class EditItem extends Component {
     const categoryId = event.target.elements.category.value;
 
     put(`/categories/${categoryId}/items/${itemId}`, { name, description }, accessToken)
-      .then((json) => {
-        if (!('id' in json)) {
-          showErrorToast(json.message);
-          return;
+      .then((response) => {
+        if (response.successful) {
+          showSuccessToast('Item is successfully updated');
+          onEditItem({ id: response.id, name, description, author_id: response.author_id }, categoryId);
         }
-        showSuccessToast('Item is successfully updated');
-        onEditItem({ id: json.id, name, description, author_id: json.author_id }, categoryId);
-      })
-      .catch((error) => {
-        showErrorToast(error.message);
-        return error;
       });
   }
 

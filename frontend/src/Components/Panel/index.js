@@ -13,6 +13,7 @@ class Panel extends Component {
     this.changeState = this.changeState.bind(this);
   }
 
+  //fetch data
   componentDidMount() {
     get('/categories')
       .then((json) => {
@@ -20,6 +21,7 @@ class Panel extends Component {
       });
   }
 
+  //name should be more specifiy
   changeState(newState) {
     this.setState(newState);
   }
@@ -28,6 +30,7 @@ class Panel extends Component {
     const { categories, visiting } = this.state;
     const { user } = this.props;
     //if data is updated already then render panel
+    //change categories in constructor
     if (categories[0].id !== 0) {
       return (
         <div className="panel">

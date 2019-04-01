@@ -20,25 +20,19 @@ class Register extends Component {
 
     post('/users', { name, password })
       .then((json) => {
-        if (json.message !== 'user created successfully') {
-          showErrorToast(json.message);
-          return;
+        if (json.successful) {
+          showSuccessToast(json.message);
+          const token = json.access_token;
+          const state = {
+            user: {
+              userId: json.id,
+              userName: name,
+              loggedIn: true,
+              accessToken: token,
+            } };
+          const { onChangeState } = this.props;
+          onChangeState(state);
         }
-        showSuccessToast(json.message);
-        const token = json.access_token;
-        const state = {
-          user: {
-            userId: json.id,
-            userName: name,
-            loggedIn: true,
-            accessToken: token,
-          } };
-        const { onChangeState } = this.props;
-        onChangeState(state);
-      })
-      .catch((error) => {
-        showErrorToast(error.message);
-        return error;
       });
   }
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { del } from '../../Helpers/fetchHelpers';
-import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
+import { showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class ViewCategory extends Component {
   constructor(props) {
@@ -14,17 +14,15 @@ class ViewCategory extends Component {
     const { accessToken, category, onDeleteCategory } = this.props;
 
     del(`/categories/${category.id}`, accessToken)
-      .then((json) => {
-        if (json.message !== 'Category deleted') {
-          showErrorToast(json.message);
-          return;
+      .then((response) => {
+        // if (json.message !== 'Category deleted') {
+        //   showErrorToast(json.message);
+        //   return;
+        // }
+        if (response.successful) {
+          showSuccessToast('Category is successfully deleted');
+          onDeleteCategory(category.id);
         }
-        showSuccessToast('Category is successfully deleted');
-        onDeleteCategory(category.id);
-      })
-      .catch((error) => {
-        showErrorToast(error.message);
-        return error;
       });
   }
 

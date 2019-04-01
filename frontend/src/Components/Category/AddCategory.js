@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { post } from '../../Helpers/fetchHelpers';
-import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
+import { showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class AddCategory extends Component {
   constructor(props) {
@@ -14,16 +14,12 @@ class AddCategory extends Component {
     const name = event.target.elements.name.value;
 
     post('/categories', { name }, accessToken)
-      .then((json) => {
-        if (!('id' in json)) {
-          showErrorToast(json.message);
-          return;
+      .then((response) => {
+        if (response.successful) {
+          showSuccessToast('Category is successfully created');
+          delete response.successful;
+          onAddCategory(response);
         }
-        showSuccessToast('Category is successfully created');
-        onAddCategory(json);
-      })
-      .catch((error) => {
-        showErrorToast(error.message);
       });
   }
 

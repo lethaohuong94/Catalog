@@ -1,7 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { put } from '../../Helpers/fetchHelpers';
-import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
+import { showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class EditCategory extends Component {
   constructor(props) {
@@ -25,17 +25,15 @@ class EditCategory extends Component {
     const { name } = this.state;
 
     put(`/categories/${category.id}`, { name }, accessToken)
-      .then((json) => {
-        if (!('id' in json)) {
-          showErrorToast(json.message);
-          return;
+      .then((response) => {
+        // if (!('id' in json)) {
+        //   showErrorToast(json.message);
+        //   return;
+        // }
+        if (response.successful) {
+          showSuccessToast('Category is successfully updated');
+          onEditCategory(response);
         }
-        showSuccessToast('Category is successfully updated');
-        onEditCategory(json);
-      })
-      .catch((error) => {
-        showErrorToast(error.message);
-        return error;
       });
   }
 

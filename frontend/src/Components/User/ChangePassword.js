@@ -13,6 +13,7 @@ class ChangePassword extends Component {
     event.preventDefault();
     const { user, history } = this.props;
     const { userId, userName, accessToken } = user;
+    //event.target.elements
     const oldPassword = event.target.elements.oldPassword.value;
     const newPassword = event.target.elements.newPassword.value;
     const confirmPassword = event.target.elements.confirmPassword.value;
@@ -22,23 +23,15 @@ class ChangePassword extends Component {
     }
 
     post('/auth', { name: userName, password: oldPassword })
-      .then((json) => {
-        //if old password is invalid then return
-        if (!('access_token' in json)) {
-          showErrorToast(json.message);
-          return;
-        }
-        //if old password is valid then change password
+      .then((response) => {
+        //validate old password
+        if (!response.successful) return;
         put(`/users/${userId}`, { name: userName, password: newPassword }, accessToken)
-          .then((json) => {
-            if (json.message !== 'User updated successfully') {
-              showErrorToast(json.message);
+          .then((response) => {
+            if (response.successful) {
+              showSuccessToast('User updated successfully');
+              history.push('/');
             }
-            showSuccessToast(json.message);
-            history.push('/');
-          })
-          .catch((error) => {
-            showErrorToast(error.message);
           });
       });
   }

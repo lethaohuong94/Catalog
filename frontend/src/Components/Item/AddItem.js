@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { post } from '../../Helpers/fetchHelpers';
-import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
+import { showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class AddItem extends Component {
   constructor(props) {
@@ -15,17 +15,11 @@ class AddItem extends Component {
     const description = event.target.elements.description.value;
 
     post(`/categories/${categoryId}/items`, { name, description }, accessToken)
-      .then((json) => {
-        if (!('id' in json)) {
-          showErrorToast(json.message);
-          return;
+      .then((response) => {
+        if (response.successful) {
+          showSuccessToast('Item is successfully created');
+          onAddItem({ id: response.id, name, description, author_id: response.author_id }, categoryId);
         }
-        showSuccessToast('Item is successfully created');
-        onAddItem({ id: json.id, name, description, author_id: json.author_id }, categoryId);
-      })
-      .catch((error) => {
-        showErrorToast(error.message);
-        return error;
       });
   }
 

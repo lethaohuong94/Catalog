@@ -1,6 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
-import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
+import { showSuccessToast } from '../../Helpers/toasterHelpers';
 import { post } from '../../Helpers/fetchHelpers';
 
 class LogIn extends Component {
@@ -15,25 +15,23 @@ class LogIn extends Component {
     const password = event.target.elements.password.value;
 
     post('/auth', { name, password })
-      .then((json) => {
-        if (!('access_token' in json)) {
-          showErrorToast(json.message);
-          return;
+      .then((response) => {
+        // if (!('access_token' in json)) {
+        //   showErrorToast(json.message);
+        //   return;
+        // }
+        if (response.successful) {
+          const token = response.access_token;
+          const newState = {
+            user: {
+              userId: response.id,
+              userName: name,
+              loggedIn: true,
+              accessToken: token,
+            } };
+          this.props.onChangeState(newState);
+          showSuccessToast('Log in successfully');
         }
-        const token = json.access_token;
-        const newState = {
-          user: {
-            userId: json.id,
-            userName: name,
-            loggedIn: true,
-            accessToken: token,
-          } };
-        this.props.onChangeState(newState);
-        showSuccessToast('Log in successfully');
-      })
-      .catch((error) => {
-        showErrorToast(error.message);
-        return error;
       });
   }
 
