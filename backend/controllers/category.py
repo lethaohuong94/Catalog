@@ -51,7 +51,7 @@ def update_category(data, user, category_id):
     # If name is changed and new name exists then raises error.
     category = CategoryModel.find_by_name(data['name'])
     if category is not None and category.id != category_id:
-        raise BadRequestError(resource + ' name already exists')
+        raise BadRequestError('category name already exists')
 
     # The resource that is requested has to exist.
     category = CategoryModel.find_by_id(category_id)
