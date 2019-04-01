@@ -1,4 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import localStorage from 'local-storage';
@@ -28,16 +27,16 @@ class Main extends Component {
   }
 
   render() {
-    const { loggedIn } = this.state.user;
-    console.log(loggedIn);
+    const { user } = this.state;
+    const { loggedIn } = user;
     return (
       <div>
-        <Header user={this.state.user} onChangeState={this.changeState} />
+        <Header user={user} onChangeState={this.changeState} />
         <Switch>
           <Route path="/register" exact render={() => (loggedIn ? <Redirect to="/" /> : <Register onChangeState={this.changeState} />)} />
           <Route path="/login" exact render={() => (loggedIn ? <Redirect to="/" /> : <LogIn onChangeState={this.changeState} />)} />
-          <Route path="/changepassword" exact render={() => (loggedIn ? <ChangePassword user={this.state.user} /> : <Redirect to="/login" />)} />
-          <Route render={() => <Panel user={this.state.user} />} />
+          <Route path="/changepassword" exact render={() => (loggedIn ? <ChangePassword user={user} /> : <Redirect to="/login" />)} />
+          <Route render={() => <Panel user={user} />} />
         </Switch>
       </div>
     );

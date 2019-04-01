@@ -1,4 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
@@ -12,7 +11,8 @@ class ChangePassword extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const { userId, userName, accessToken } = this.props.user;
+    const { user, history } = this.props;
+    const { userId, userName, accessToken } = user;
     const oldPassword = event.target.elements.oldPassword.value;
     const newPassword = event.target.elements.newPassword.value;
     const confirmPassword = event.target.elements.confirmPassword.value;
@@ -35,7 +35,7 @@ class ChangePassword extends Component {
               showErrorToast(json.message);
             }
             showSuccessToast(json.message);
-            this.props.history.push('/');
+            history.push('/');
           })
           .catch((error) => {
             showErrorToast(error.message);

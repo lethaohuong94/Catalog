@@ -1,6 +1,5 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/jsx-wrap-multilines */
-/* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 import React, { Component } from 'react';
@@ -51,7 +50,7 @@ class Item extends Component {
     return (
       <div>
         <Switch>
-          <Route path="/category/:categoryid/item/:itemid" exact render={params =>
+          <Route path="/category/:categoryid/item/:itemid" exact render={params => (
             <ViewItem
               accessToken={accessToken}
               categoryId={params.match.params.categoryid}
@@ -59,10 +58,11 @@ class Item extends Component {
               category={categories.find(category => category.id === Number(params.match.params.categoryid))}
               onDeleteItem={this.deleteItem}
               userId={userId}
-            />}
+            />
+          )}
           />
-          <Route path="/category/:categoryid/item" exact render={params =>
-            (loggedIn
+          <Route path="/category/:categoryid/item" exact render={params => (
+            loggedIn
               ? <AddItem
                 accessToken={accessToken}
                 categoryId={params.match.params.categoryid}
@@ -70,8 +70,8 @@ class Item extends Component {
               />
               : <Redirect to="/login" />)}
           />
-          <Route path="/category/:categoryid/item/:itemid/edit" exact render={params =>
-            (loggedIn
+          <Route path="/category/:categoryid/item/:itemid/edit" exact render={params => (
+            loggedIn
               ? <EditItem
                 accessToken={accessToken}
                 categories={categories}

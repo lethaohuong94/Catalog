@@ -1,7 +1,3 @@
-/* eslint-disable react/jsx-wrap-multilines */
-/* eslint-disable implicit-arrow-linebreak */
-/* eslint-disable react/jsx-one-expression-per-line */
-
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 
@@ -25,11 +21,11 @@ class LeftPanel extends Component {
       <div className="left-panel">
         <div className="button-container"><Link className="small-button" to="/category/new">Add Category</Link></div>
         <ul>
-          {categories
-            .map(category =>
-              <li key={category.id} style={{ background: (category.id === visiting ? '#0658845e' : null) }}>
-                <Link to={`/category/${category.id}`} key={category.id} className="category" onClick={event => this.handleClick(event, category.id)}>{category.name}</Link>
-              </li>)}
+          {categories.map(category => (
+            <li key={category.id} style={{ background: (category.id === visiting ? '#0658845e' : null) }}>
+              <Link to={`/category/${category.id}`} key={category.id} className="category" onClick={event => this.handleClick(event, category.id)}>{category.name}</Link>
+            </li>
+          ))}
         </ul>
       </div>
     );

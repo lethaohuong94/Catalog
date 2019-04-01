@@ -1,7 +1,6 @@
 /* eslint-disable no-return-assign */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/jsx-wrap-multilines */
-/* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 import React, { Component } from 'react';
@@ -70,13 +69,14 @@ class Category extends Component {
               />
               : <Redirect to="/login" />)}
           />
-          <Route path="/category/:id" exact render={params =>
+          <Route path="/category/:id" exact render={params => (
             <ViewCategory
               accessToken={accessToken}
               userId={userId}
               category={categories.find(category => category.id === Number(params.match.params.id))}
               onDeleteCategory={this.deleteCategory}
-            />}
+            />
+          )}
           />
           <Route render={() => <Redirect to="/" />} />
         </Switch>
