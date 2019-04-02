@@ -18,8 +18,7 @@ class AddCategory extends Component {
     }
   }
 
-  handleSubmit(event) {
-    event.preventDefault();
+  handleSubmit() {
     const { accessToken, onAddCategory } = this.props;
     const { name } = this.state;
 
@@ -32,15 +31,27 @@ class AddCategory extends Component {
       });
   }
 
+  renderMessage() {
+    return (
+      <h3>This is where a category is created</h3>
+    );
+  }
+
+  renderForm() {
+    return (
+      <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
+        <h5>Please fill the form</h5>
+        <input type="text" placeholder="Category name" onChange={e => this.handleChangeName(e)} />
+        <button type="submit" onClick={e => this.handleSubmit(e)}> Add </button>
+      </div>
+    );
+  }
+
   render() {
     return (
       <div>
-        <h3>This is where a category is created</h3>
-        <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
-          <h5>Please fill the form</h5>
-          <input type="text" placeholder="Category name" onChange={e => this.handleChangeName(e)} />
-          <button type="submit" onClick={e => this.handleSubmit(e)}> Add </button>
-        </div>
+        {this.renderMessage()}
+        {this.renderForm()}
       </div>
     );
   }

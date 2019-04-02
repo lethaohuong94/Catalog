@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 
 class Header extends Component {
-  render() {
-    const { user, onChangeState, history } = this.props;
+  handleLogout() {
+    const { onChangeState, history } = this.props;
     const newState = {
       user: {
         loggedIn: false,
@@ -11,33 +11,55 @@ class Header extends Component {
         userName: '',
         accessToken: '',
       } };
+    onChangeState(newState);
+    history.push('/');
+  }
 
+  renderTitle() {
+    return (
+      <h1>
+        <Link to="/">Catalog App</Link>
+      </h1>
+    );
+  }
+
+  renderLoggedIn() {
+    const { user } = this.props;
+    return (
+      <div className="button-container">
+        <Link className="button" to="/changepassword">Change Password</Link>
+        <button type="button" className="button" onClick={e => this.handleLogout(e)}>
+              Log out
+        </button>
+        <h5>{`user id: ${user.userId}`}</h5>
+      </div>
+    );
+  }
+
+  renderNotLoggedIn() {
+    return (
+      <div className="button-container">
+        <Link className="button" to="/register">Register</Link>
+        <Link className="button" to="/login">Log in</Link>
+      </div>
+    );
+  }
+
+  render() {
+    const { user } = this.props;
     if (user.loggedIn) {
       return (
         <div className="header">
-          <h1>
-            <Link to="/">Catalog App</Link>
-          </h1>
-          <div className="button-container">
-            <Link className="button" to="/changepassword">Change Password</Link>
-            <button type="button" className="button" onClick={() => { onChangeState(newState); history.push('/'); }}>
-              Log out
-            </button>
-            <h5>{`user id: ${user.userId}`}</h5>
-          </div>
+          {this.renderTitle()}
+          {this.renderLoggedIn()}
         </div>
       );
     }
 
     return (
-      <div>
-        <h1>
-          <Link to="/">Catalog App</Link>
-        </h1>
-        <div className="button-container">
-          <Link className="button" to="/register">Register</Link>
-          <Link className="button" to="/login">Log in</Link>
-        </div>
+      <div className="header">
+        {this.renderTitle()}
+        {this.renderNotLoggedIn()}
       </div>
     );
   }

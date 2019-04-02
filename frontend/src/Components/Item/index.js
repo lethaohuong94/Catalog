@@ -11,7 +11,7 @@ import EditItem from './EditItem';
 class Item extends Component {
   constructor(props) {
     super(props);
-    this.categories = [];
+    if (this.props.categories) this.categories = this.props.categories;
     this.addItem = this.addItem.bind(this);
     this.deleteItem = this.deleteItem.bind(this);
     this.editItem = this.editItem.bind(this);
@@ -19,7 +19,6 @@ class Item extends Component {
 
   //save index into separate array
   indexFromId(categoryId) {
-    this.categories = this.props.categories;
     return this.categories.findIndex(category => category.id === Number(categoryId));
   }
 
@@ -38,11 +37,14 @@ class Item extends Component {
   }
 
   editItem(edittedItem, categoryId) {
+    //delete item from old category
     const index = this.indexFromId(categoryId);
     this.categories[index].items = this.categories[index].items.filter(item => item.id !== Number(edittedItem.id));
-    this.categories[index].items = this.categories[index].items.concat([edittedItem]);
+    //add item into new category
+    const destination = this.indexFromId(Number(edittedItem.category_id));
+    this.categories[destination].items = this.categories[destination].items.concat([edittedItem]);
     this.props.onChangeState({ categories: this.categories, visiting: categoryId });
-    this.props.history.push(`/category/${categoryId}/item/${edittedItem.id}`);
+    this.props.history.push(`/category/${edittedItem.category_id}/item/${edittedItem.id}`);
   }
 
   render() {

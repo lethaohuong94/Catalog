@@ -7,7 +7,7 @@ class Panel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      categories: [{ id: 0, items: [] }],
+      categories: [],
       visiting: 0,
     };
     this.changeState = this.changeState.bind(this);
@@ -30,8 +30,7 @@ class Panel extends Component {
     const { categories, visiting } = this.state;
     const { user } = this.props;
     //if data is updated already then render panel
-    //change categories in constructor
-    if (categories[0].id !== 0) {
+    if (categories.length > 0) {
       return (
         <div className="panel">
           <LeftPanel categories={categories} visiting={visiting} onChangeState={this.changeState} />

@@ -3,11 +3,31 @@ import { post } from '../../Helpers/fetchHelpers';
 import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class Register extends Component {
-  handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    const password = event.target.elements.password.value;
-    const confirmPassword = event.target.elements.confirmPassword.value;
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      this.handleSubmit(event);
+    }
+  }
+
+  handleChangeName(event) {
+    this.setState({ name: event.target.value });
+  }
+
+  handleChangePassword(event) {
+    this.setState({ password: event.target.value });
+  }
+
+  handleChangeConfirmPassword(event) {
+    this.setState({ confirmPassword: event.target.value });
+  }
+
+  handleSubmit() {
+    const { name, password, confirmPassword } = this.state;
     if (password !== confirmPassword) {
       showErrorToast('passwords do not match');
       return;
@@ -29,18 +49,22 @@ class Register extends Component {
       });
   }
 
+  renderForm() {
+    return (
+      <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
+        <h5>Please fill the form</h5>
+        <input type="text" placeholder="Username" onChange={e => this.handleChangeName(e)} />
+        <input type="password" placeholder="Password" onChange={e => this.handleChangePassword(e)} />
+        <input type="password" placeholder="Confirm Password" onChange={e => this.handleChangeConfirmPassword(e)} />
+        <button type="submit" onClick={e => this.handleSubmit(e)}> Register </button>
+      </div>
+    );
+  }
+
   render() {
     return (
       <div>
-        <div className="form">
-          <form onSubmit={e => this.handleSubmit(e)}>
-            <h5>Please fill the form</h5>
-            <input type="text" placeholder="Username" name="name" />
-            <input type="password" placeholder="Password" name="password" />
-            <input type="password" placeholder="Confirm Password" name="confirmPassword" />
-            <button type="submit"> Register </button>
-          </form>
-        </div>
+        {this.renderForm()}
       </div>
     );
   }

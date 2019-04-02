@@ -32,15 +32,27 @@ class EditCategory extends Component {
       });
   }
 
+  renderMessage() {
+    return (
+      <h3>Edit category</h3>
+    );
+  }
+
+  renderForm() {
+    return (
+      <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
+        <h5>Please fill the form</h5>
+        <input type="text" placeholder="new name" value={this.state.name} onChange={e => this.handleChangeName(e)} />
+        <button type="submit" onClick={e => this.handleSubmit(e)}> Save change </button>
+      </div>
+    );
+  }
+
   render() {
     return (
       <div>
-        <h3>Edit category</h3>
-        <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
-          <h5>Please fill the form</h5>
-          <input type="text" placeholder="new name" value={this.state.name} onChange={e => this.handleChangeName(e)} />
-          <button type="submit" onClick={e => this.handleSubmit(e)}> Save change </button>
-        </div>
+        {this.renderMessage()}
+        {this.renderForm()}
       </div>
     );
   }

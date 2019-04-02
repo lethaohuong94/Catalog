@@ -4,7 +4,7 @@ import { del } from '../../Helpers/fetchHelpers';
 import { showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class ViewCategory extends Component {
-  handleSubmit(event) {
+  handleDelete(event) {
     event.preventDefault();
     const { accessToken, category, onDeleteCategory } = this.props;
 
@@ -22,7 +22,7 @@ class ViewCategory extends Component {
       <div className="button-container">
         {(userId === category.author_id) && <Link className="small-button" to={`/category/${category.id}/edit`}>Edit Category</Link>}
         <Link className="small-button" to={`/category/${category.id}/item`}>Add Item</Link>
-        {(userId === category.author_id) && <button type="button" className="small-button" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this category?')) this.handleSubmit(e); }}>delete category</button>}
+        {(userId === category.author_id) && <button type="button" className="small-button" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this category?')) this.handleDelete(e); }}>delete category</button>}
       </div>
     );
   }

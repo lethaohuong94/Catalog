@@ -4,10 +4,27 @@ import { showSuccessToast } from '../../Helpers/toasterHelpers';
 import { post } from '../../Helpers/fetchHelpers';
 
 class LogIn extends Component {
-  handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    const password = event.target.elements.password.value;
+  constructor(props) {
+    super(props);
+    this.state = { name: '', password: '' };
+  }
+
+  handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      this.handleSubmit(event);
+    }
+  }
+
+  handleChangeName(event) {
+    this.setState({ name: event.target.value });
+  }
+
+  handleChangePassword(event) {
+    this.setState({ password: event.target.value });
+  }
+
+  handleSubmit() {
+    const { name, password } = this.state;
 
     post('/auth', { name, password })
       .then((response) => {
@@ -24,17 +41,21 @@ class LogIn extends Component {
       });
   }
 
+  renderForm() {
+    return (
+      <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
+        <h5>Please fill the form</h5>
+        <input type="text" placeholder="Username" onChange={e => this.handleChangeName(e)} />
+        <input type="password" placeholder="Password" onChange={e => this.handleChangePassword(e)} />
+        <button type="submit" onClick={e => this.handleSubmit(e)}> Log In </button>
+      </div>
+    );
+  }
+
   render() {
     return (
       <div>
-        <div className="form">
-          <form onSubmit={e => this.handleSubmit(e)}>
-            <h5>Please fill the form</h5>
-            <input type="text" placeholder="Username" name="name" />
-            <input type="password" placeholder="Password" name="password" />
-            <button type="submit"> Log In </button>
-          </form>
-        </div>
+        {this.renderForm()}
       </div>
     );
   }

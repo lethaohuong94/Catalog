@@ -3,11 +3,28 @@ import { post } from '../../Helpers/fetchHelpers';
 import { showSuccessToast } from '../../Helpers/toasterHelpers';
 
 class AddItem extends Component {
-  handleSubmit(event) {
-    event.preventDefault();
+  constructor(props) {
+    super(props);
+    this.state = { name: '', description: '' };
+  }
+
+  handleChangeName(event) {
+    this.setState({ name: event.target.value });
+  }
+
+  handleChangeDescription(event) {
+    this.setState({ description: event.target.value });
+  }
+
+  handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      this.handleSubmit(event);
+    }
+  }
+
+  handleSubmit() {
     const { accessToken, categoryId, onAddItem } = this.props;
-    const name = event.target.elements.name.value;
-    const description = event.target.elements.description.value;
+    const { name, description } = this.state;
 
     post(`/categories/${categoryId}/items`, { name, description }, accessToken)
       .then((response) => {
@@ -17,18 +34,28 @@ class AddItem extends Component {
       });
   }
 
+  renderMessage() {
+    return (
+      <h3>This is where a new item is created</h3>
+    );
+  }
+
+  renderForm() {
+    return (
+      <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
+        <h5>Please fill the form</h5>
+        <input type="text" placeholder="Item name" onChange={e => this.handleChangeName(e)} />
+        <input type="text" placeholder="Item description" onChange={e => this.handleChangeDescription(e)} />
+        <button type="submit" onClick={e => this.handleSubmit(e)}> Add </button>
+      </div>
+    );
+  }
+
   render() {
     return (
       <div>
-        <h3>This is where a new item is created</h3>
-        <div className="form">
-          <form onSubmit={e => this.handleSubmit(e)}>
-            <h5>Please fill the form</h5>
-            <input type="text" placeholder="Item name" name="name" />
-            <input type="text" placeholder="Item description" name="description" />
-            <button type="submit"> Add </button>
-          </form>
-        </div>
+        {this.renderMessage()}
+        {this.renderForm()}
       </div>
     );
   }

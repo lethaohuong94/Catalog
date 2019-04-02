@@ -4,14 +4,33 @@ import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
 import { post, put } from '../../Helpers/fetchHelpers';
 
 class ChangePassword extends Component {
-  handleSubmit(event) {
-    event.preventDefault();
+  constructor(props) {
+    super(props);
+    this.state = { oldPassword: '', newPassword: '', confirmPassword: '' };
+  }
+
+  handleKeyPress(event) {
+    if (event.key === 'Enter') {
+      this.handleSubmit(event);
+    }
+  }
+
+  handleChangeOldPassword(event) {
+    this.setState({ oldPassword: event.target.value });
+  }
+
+  handleChangeNewPassword(event) {
+    this.setState({ newPassword: event.target.value });
+  }
+
+  handleChangeConfirmPassword(event) {
+    this.setState({ confirmPassword: event.target.value });
+  }
+
+  handleSubmit() {
     const { user, history } = this.props;
     const { userId, userName, accessToken } = user;
-    //event.target.elements
-    const oldPassword = event.target.elements.oldPassword.value;
-    const newPassword = event.target.elements.newPassword.value;
-    const confirmPassword = event.target.elements.confirmPassword.value;
+    const { oldPassword, newPassword, confirmPassword } = this.state;
     if (newPassword !== confirmPassword) {
       showErrorToast('Passwords do not match');
       return;
@@ -30,18 +49,22 @@ class ChangePassword extends Component {
       });
   }
 
+  renderForm() {
+    return (
+      <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
+        <h5>Please fill the form</h5>
+        <input type="password" placeholder="Old Password" onChange={e => this.handleChangeOldPassword(e)} />
+        <input type="password" placeholder="New Password" onChange={e => this.handleChangeNewPassword(e)} />
+        <input type="password" placeholder="Confirm New Password" onChange={e => this.handleChangeConfirmPassword(e)} />
+        <button type="submit" onClick={e => this.handleSubmit(e)}> Change Password </button>
+      </div>
+    );
+  }
+
   render() {
     return (
       <div>
-        <div className="form">
-          <form onSubmit={e => this.handleSubmit(e)}>
-            <h5>Please fill the form</h5>
-            <input type="password" placeholder="Old Password" name="oldPassword" />
-            <input type="password" placeholder="New Password" name="newPassword" />
-            <input type="password" placeholder="Confirm New Password" name="confirmPassword" />
-            <button type="submit"> Change Password </button>
-          </form>
-        </div>
+        {this.renderForm()}
       </div>
     );
   }
