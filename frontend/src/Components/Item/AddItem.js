@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { post } from '../../Helpers/fetchHelpers';
-import { showSuccessToast } from '../../Helpers/toasterHelpers';
+import { showSuccessToast, showErrorToast, validateTextInput } from '../../Helpers/helpers';
 
 class AddItem extends Component {
   constructor(props) {
@@ -25,6 +25,14 @@ class AddItem extends Component {
   handleSubmit() {
     const { accessToken, categoryId, onAddItem } = this.props;
     const { name, description } = this.state;
+
+    try {
+      validateTextInput('name', name);
+      validateTextInput('description', description);
+    } catch (e) {
+      showErrorToast(e.message);
+      return;
+    }
 
     post(`/categories/${categoryId}/items`, { name, description }, accessToken)
       .then((response) => {

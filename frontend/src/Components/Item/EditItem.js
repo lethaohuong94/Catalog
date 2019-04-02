@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { put } from '../../Helpers/fetchHelpers';
-import { showSuccessToast } from '../../Helpers/toasterHelpers';
+import { showSuccessToast, showErrorToast, validateTextInput } from '../../Helpers/helpers';
 
 class EditItem extends Component {
   constructor(props) {
@@ -38,6 +38,14 @@ class EditItem extends Component {
   handleSubmit() {
     const { accessToken, itemId, onEditItem } = this.props;
     const { name, description, categoryId, oldCategoryId } = this.state;
+
+    try {
+      validateTextInput('name', name);
+      validateTextInput('description', description);
+    } catch (e) {
+      showErrorToast(e.message);
+      return;
+    }
 
     put(`/categories/${categoryId}/items/${itemId}`, { name, description }, accessToken)
       .then((response) => {

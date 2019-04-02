@@ -1,6 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
-import { showSuccessToast } from '../../Helpers/toasterHelpers';
+import { showSuccessToast, showErrorToast, validateTextInput } from '../../Helpers/helpers';
 import { post } from '../../Helpers/fetchHelpers';
 
 class LogIn extends Component {
@@ -25,6 +25,14 @@ class LogIn extends Component {
 
   handleSubmit() {
     const { name, password } = this.state;
+
+    try {
+      validateTextInput('name', name);
+      validateTextInput('password', password);
+    } catch (e) {
+      showErrorToast(e.message);
+      return;
+    }
 
     post('/auth', { name, password })
       .then((response) => {

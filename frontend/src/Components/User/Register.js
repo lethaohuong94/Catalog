@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { post } from '../../Helpers/fetchHelpers';
-import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
+import { showErrorToast, showSuccessToast, validateTextInput } from '../../Helpers/helpers';
 
 class Register extends Component {
   constructor(props) {
@@ -28,8 +28,13 @@ class Register extends Component {
 
   handleSubmit() {
     const { name, password, confirmPassword } = this.state;
-    if (password !== confirmPassword) {
-      showErrorToast('passwords do not match');
+
+    try {
+      validateTextInput('name', name);
+      validateTextInput('password', password);
+      if (password !== confirmPassword) throw Error('passwords do not match');
+    } catch (e) {
+      showErrorToast(e.message);
       return;
     }
 

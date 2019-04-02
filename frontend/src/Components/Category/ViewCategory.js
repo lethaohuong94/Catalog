@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { del } from '../../Helpers/fetchHelpers';
-import { showSuccessToast } from '../../Helpers/toasterHelpers';
+import { showSuccessToast } from '../../Helpers/helpers';
 
 class ViewCategory extends Component {
   handleDelete(event) {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { showErrorToast, showSuccessToast } from '../../Helpers/toasterHelpers';
+import { showErrorToast, showSuccessToast, validateTextInput } from '../../Helpers/helpers';
 import { post, put } from '../../Helpers/fetchHelpers';
 
 class ChangePassword extends Component {
@@ -31,8 +31,13 @@ class ChangePassword extends Component {
     const { user, history } = this.props;
     const { userId, userName, accessToken } = user;
     const { oldPassword, newPassword, confirmPassword } = this.state;
-    if (newPassword !== confirmPassword) {
-      showErrorToast('Passwords do not match');
+
+    try {
+      validateTextInput('old password', oldPassword);
+      validateTextInput('new password', confirmPassword);
+      if (newPassword !== confirmPassword) throw Error('passwords do not match');
+    } catch (e) {
+      showErrorToast(e.message);
       return;
     }
 

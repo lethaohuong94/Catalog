@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { del } from '../../Helpers/fetchHelpers';
-import { showSuccessToast } from '../../Helpers/toasterHelpers';
+import { showSuccessToast } from '../../Helpers/helpers';
 
 class ViewItem extends Component {
   //TODO: change function name
   handleDelete(event) {
+    if (!(window.confirm('Are you sure you wish to delete this item?'))) return;
     event.preventDefault();
     const { accessToken, category, itemId, onDeleteItem } = this.props;
 
@@ -23,7 +24,7 @@ class ViewItem extends Component {
       return (
         <div className="button-container">
           <Link className="small-button" to={`/category/${category.id}/item/${itemId}/edit`}>Edit Item</Link>
-          <button type="button" className="small-button" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this item?')) this.handleDelete(e); }}>delete item</button>
+          <button type="button" className="small-button" onClick={e => this.handleDelete(e)}>delete item</button>
         </div>
       );
     }
