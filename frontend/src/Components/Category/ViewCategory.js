@@ -1,16 +1,10 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Redirect, withRouter } from 'react-router-dom';
 import { del } from '../../Helpers/fetchHelpers';
 import { showSuccessToast } from '../../Helpers/helpers';
 
 class ViewCategory extends Component {
-  // componentDidUpdate() {
-  //   if (this.props.category) {
-  //     this.props.onVisit(this.props.category.id);
-  //   }
-  // }
-
   handleDelete(event) {
     event.preventDefault();
     const { accessToken, category, onDeleteCategory } = this.props;
@@ -19,7 +13,7 @@ class ViewCategory extends Component {
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Category is successfully deleted');
-        onDeleteCategory(category.id);
+        onDeleteCategory('/');
       });
   }
 
@@ -65,4 +59,4 @@ class ViewCategory extends Component {
   }
 }
 
-export default ViewCategory;
+export default withRouter(ViewCategory);

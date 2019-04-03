@@ -11,7 +11,7 @@ class EditItem extends Component {
       this.item = this.category.items.find(item => item.id === Number(itemId));
 
       const { name, description } = this.item;
-      this.state = { name, description, categoryId, oldCategoryId: categoryId };
+      this.state = { name, description, categoryId };
     } catch {
       this.state = {};
     }
@@ -37,7 +37,7 @@ class EditItem extends Component {
 
   handleSubmit() {
     const { accessToken, itemId, onEditItem } = this.props;
-    const { name, description, categoryId, oldCategoryId } = this.state;
+    const { name, description, categoryId } = this.state;
 
     try {
       validateTextInput('name', name);
@@ -51,7 +51,7 @@ class EditItem extends Component {
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Item is successfully updated');
-        onEditItem({ id: response.id, name, description, author_id: response.author_id, category_id: response.category_id }, oldCategoryId);
+        onEditItem(`/category/${response.category_id}/item/${response.id}`);
       });
   }
 

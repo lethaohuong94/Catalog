@@ -1,40 +1,31 @@
+/* eslint-disable react/destructuring-assignment */
+/* eslint-disable no-param-reassign */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';
 import { get } from '../../Helpers/fetchHelpers';
+import * as actions from '../../actions';
 
 class Panel extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      categories: [],
-      visiting: 0,
-    };
-    this.changeState = this.changeState.bind(this);
-  }
-
-  //fetch data
   componentDidMount() {
     get('/categories')
       .then((json) => {
-        this.setState({ categories: json });
+        delete json.successful;
+        this.props.updateCategories(json);
       });
   }
 
-  //name should be more specifiy
-  changeState(newState) {
-    this.setState(newState);
-  }
-
   render() {
-    const { categories, visiting } = this.state;
-    const { user } = this.props;
-    //if data is updated already then render panel
+    const { categories } = this.props;
+    console.log('panel index');
+    console.log(this.props.categories);
     if (categories.length > 0) {
       return (
         <div className="panel">
-          <LeftPanel categories={categories} visiting={visiting} onChangeState={this.changeState} />
-          <RightPanel categories={categories} user={user} onChangeState={this.changeState} />
+          <LeftPanel categories={categories} />
+          <RightPanel />
         </div>
       );
     }
@@ -42,4 +33,15 @@ class Panel extends Component {
   }
 }
 
-export default Panel;
+function mapStateToProps(state) {
+  return {
+    user: state.user,
+    categories: state.categories,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(actions, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Panel);

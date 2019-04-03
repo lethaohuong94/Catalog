@@ -1,14 +1,22 @@
-//log in
+//user log in
 export function login(userInfo) {
   return {
-    type: 'LOGIN',
+    type: 'LOG_IN',
     userInfo,
   };
 }
 
-//log out
+//user log out
 export function logout() {
   return {
-    type: 'LOGOUT',
+    type: 'LOG_OUT',
+  };
+}
+
+//category update
+export function updateCategories(categories) {
+  return {
+    type: 'UPDATE_CATEGORIES',
+    categories,
   };
 }

@@ -2,55 +2,32 @@
 /* eslint-disable no-unused-vars */
 import localStorage from 'local-storage';
 import { combineReducers } from 'redux';
-
-// function user(state = localStorage.get('state'), action) {
-//   console.log('user reducer');
-//   console.log(state);
-//   switch (action.type) {
-//     case 'LOGIN':
-//       let newState = { user: { ...action.userInfo, loggedIn: true }, categories: {} };
-//       console.log('login');
-//       console.log(newState);
-//       localStorage.set('state', newState);
-//       return newState;
-//     case 'LOGOUT':
-//       const user = { loggedIn: false, userName: '', userId: 0, accessToken: '' };
-//       newState = { user, categories: {} };
-//       localStorage.set('state', newState);
-//       console.log('logout');
-//       console.log(newState);
-//       return newState;
-//     default: return state;
-//   }
-// }
+import { get } from './Helpers/fetchHelpers';
 
 function user(state = localStorage.get('user'), action) {
-  console.log('user reducer');
-  console.log(state);
+  let newState = {};
   switch (action.type) {
-    case 'LOGIN':
-      let newState = { ...action.userInfo, loggedIn: true };
-      console.log('login');
-      console.log(newState);
+    case 'LOG_IN':
+      newState = { ...action.userInfo, loggedIn: true };
       localStorage.set('user', newState);
       return newState;
-    case 'LOGOUT':
+    case 'LOG_OUT':
       newState = { loggedIn: false, userName: '', userId: 0, accessToken: '' };
-      //newState = { user, categories: {} };
       localStorage.set('user', newState);
-      console.log('logout');
-      console.log(newState);
       return newState;
     default: return state;
   }
 }
 
 function categories(state = {}, action) {
-  return state;
+  switch (action.type) {
+    case 'UPDATE_CATEGORIES':
+      return action.categories;
+    default:
+      return state;
+  }
 }
 
 const rootReducer = combineReducers({ user, categories });
 
 export default rootReducer;
-
-//state = localStorage.get('state')

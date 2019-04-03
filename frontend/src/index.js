@@ -12,11 +12,9 @@ import store from './store';
 import * as actions from './actions';
 
 function mapStateToProps(state) {
-  console.log('connect state');
-  console.log(state);
-  console.log(state.user);
   return {
     user: state.user,
+    categories: state.categories,
   };
 }
 

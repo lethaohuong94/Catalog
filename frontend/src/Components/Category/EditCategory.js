@@ -1,5 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { put } from '../../Helpers/fetchHelpers';
 import { showSuccessToast, showErrorToast, validateTextInput } from '../../Helpers/helpers';
 
@@ -35,7 +36,7 @@ class EditCategory extends Component {
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Category is successfully updated');
-        onEditCategory(response);
+        onEditCategory(`/category/${response.id}`);
       });
   }
 
@@ -65,4 +66,4 @@ class EditCategory extends Component {
   }
 }
 
-export default EditCategory;
+export default withRouter(EditCategory);

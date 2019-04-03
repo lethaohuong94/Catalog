@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { post } from '../../Helpers/fetchHelpers';
 import { showSuccessToast, validateTextInput, showErrorToast } from '../../Helpers/helpers';
 
@@ -18,7 +19,7 @@ class AddCategory extends Component {
     }
   }
 
-  handleSubmit() {
+  async handleSubmit() {
     const { accessToken, onAddCategory } = this.props;
     const { name } = this.state;
 
@@ -34,7 +35,7 @@ class AddCategory extends Component {
         if (!response.successful) return;
         showSuccessToast('Category is successfully created');
         delete response.successful;
-        onAddCategory(response);
+        onAddCategory(`/category/${response.id}`);
       });
   }
 
@@ -64,4 +65,4 @@ class AddCategory extends Component {
   }
 }
 
-export default AddCategory;
+export default withRouter(AddCategory);

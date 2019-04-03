@@ -38,7 +38,7 @@ class AddItem extends Component {
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Item is successfully created');
-        onAddItem({ id: response.id, name, description, author_id: response.author_id }, categoryId);
+        onAddItem(`/category/${categoryId}`);
       });
   }
 

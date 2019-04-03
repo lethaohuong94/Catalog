@@ -1,50 +1,50 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/jsx-wrap-multilines */
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 import React, { Component } from 'react';
 import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import ViewItem from './ViewItem';
 import AddItem from './AddItem';
 import EditItem from './EditItem';
+import * as actions from '../../actions';
+import { get } from '../../Helpers/fetchHelpers';
 
 class Item extends Component {
   constructor(props) {
     super(props);
-    if (this.props.categories) this.categories = this.props.categories;
-    this.addItem = this.addItem.bind(this);
-    this.deleteItem = this.deleteItem.bind(this);
-    this.editItem = this.editItem.bind(this);
+    //if (this.props.categories) this.categories = this.props.categories;
+    // this.addItem = this.addItem.bind(this);
+    // this.deleteItem = this.deleteItem.bind(this);
+    // this.editItem = this.editItem.bind(this);
+    this.refetchThenRedirect = this.refetchThenRedirect.bind(this);
   }
 
-  //save index into separate array
-  indexFromId(categoryId) {
-    return this.categories.findIndex(category => category.id === Number(categoryId));
-  }
+  // async addItem(newPath) {
+  //   const categories = await get('/categories').then(json => json);
+  //   this.props.updateCategories(categories);
+  //   this.props.history.push(newPath);
+  // }
 
-  addItem(newItem, categoryId) {
-    const index = this.indexFromId(categoryId);
-    this.categories[index].items = this.categories[index].items.concat([newItem]);
-    this.props.onChangeState({ categories: this.categories, visiting: categoryId });
-    this.props.history.push(`/category/${categoryId}`);
-  }
+  // async deleteItem(newPath) {
+  //   const categories = await get('/categories').then(json => json);
+  //   this.props.updateCategories(categories);
+  //   this.props.history.push(newPath);
+  // }
 
-  deleteItem(itemId, categoryId) {
-    const index = this.indexFromId(categoryId);
-    this.categories[index].items = this.categories[index].items.filter(item => item.id !== Number(itemId));
-    this.props.onChangeState({ categories: this.categories, visiting: categoryId });
-    this.props.history.push(`/category/${categoryId}`);
-  }
+  // async editItem(newPath) {
+  //   const categories = await get('/categories').then(json => json);
+  //   this.props.updateCategories(categories);
+  //   this.props.history.push(newPath);
+  // }
 
-  editItem(edittedItem, categoryId) {
-    //delete item from old category
-    const index = this.indexFromId(categoryId);
-    this.categories[index].items = this.categories[index].items.filter(item => item.id !== Number(edittedItem.id));
-    //add item into new category
-    const destination = this.indexFromId(Number(edittedItem.category_id));
-    this.categories[destination].items = this.categories[destination].items.concat([edittedItem]);
-    this.props.onChangeState({ categories: this.categories, visiting: categoryId });
-    this.props.history.push(`/category/${edittedItem.category_id}/item/${edittedItem.id}`);
+  async refetchThenRedirect(newPath) {
+    const categories = await get('/categories').then(json => json);
+    this.props.updateCategories(categories);
+    this.props.history.push(newPath);
   }
 
   render() {
@@ -59,7 +59,7 @@ class Item extends Component {
               categoryId={params.match.params.categoryid}
               itemId={params.match.params.itemid}
               category={categories.find(category => category.id === Number(params.match.params.categoryid))}
-              onDeleteItem={this.deleteItem}
+              onDeleteItem={this.refetchThenRedirect}
               userId={userId}
             />
           )}
@@ -69,7 +69,7 @@ class Item extends Component {
               ? <AddItem
                 accessToken={accessToken}
                 categoryId={params.match.params.categoryid}
-                onAddItem={this.addItem}
+                onAddItem={this.refetchThenRedirect}
               />
               : <Redirect to="/login" />)}
           />
@@ -80,7 +80,7 @@ class Item extends Component {
                 categories={categories}
                 categoryId={params.match.params.categoryid}
                 itemId={params.match.params.itemid}
-                onEditItem={this.editItem}
+                onEditItem={this.refetchThenRedirect}
               />
               : <Redirect to="/login" />)}
           />
@@ -91,4 +91,15 @@ class Item extends Component {
   }
 }
 
-export default withRouter(Item);
+function mapStateToProps(state) {
+  return {
+    user: state.user,
+    categories: state.categories,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(actions, dispatch);
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Item));

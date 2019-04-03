@@ -1,49 +1,27 @@
-/* eslint-disable no-return-assign */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/jsx-wrap-multilines */
 /* eslint-disable react/jsx-first-prop-new-line */
 /* eslint-disable react/jsx-max-props-per-line */
 import React, { Component } from 'react';
 import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import ViewCategory from './ViewCategory';
 import AddCategory from './AddCategory';
 import EditCategory from './EditCategory';
+import * as actions from '../../actions';
+import { get } from '../../Helpers/fetchHelpers';
 
 class Category extends Component {
   constructor(props) {
     super(props);
-    this.categories = [];
-    this.addCategory = this.addCategory.bind(this);
-    this.deleteCategory = this.deleteCategory.bind(this);
-    this.editCategory = this.editCategory.bind(this);
+    this.refetchThenRedirect = this.refetchThenRedirect.bind(this);
   }
 
-  componentDidMount() {
-    this.categories = this.props.categories;
-  }
-
-  addCategory(newCategory) {
-    this.categories = this.categories.concat([newCategory]);
-    this.props.onChangeState({ categories: this.categories, visiting: newCategory.id });
-    this.props.history.push(`/category/${newCategory.id}`);
-  }
-
-  deleteCategory(categoryId) {
-    //move all item from deleted category to 'Unspecifed'
-    const category = this.categories.find(category => category.id === Number(categoryId));
-    const defaultIndex = this.categories.findIndex(category => category.name === 'Unspecified');
-    this.categories[defaultIndex].items = this.categories[defaultIndex].items.concat(category.items);
-    //delete category
-    this.categories = this.categories.filter(category => category.id !== Number(categoryId));
-    this.props.onChangeState({ categories: this.categories, visiting: 0 });
-    this.props.history.push('/');
-  }
-
-  editCategory(edittedCategory) {
-    this.categories = this.categories.filter(category => category.id !== Number(edittedCategory.id));
-    this.categories = this.categories.concat([edittedCategory]);
-    this.props.onChangeState({ categories: this.categories, visiting: edittedCategory.id });
-    this.props.history.push(`/category/${edittedCategory.id}`);
+  async refetchThenRedirect(newPath) {
+    const categories = await get('/categories').then(json => json);
+    this.props.updateCategories(categories);
+    this.props.history.push(newPath);
   }
 
   render() {
@@ -56,7 +34,7 @@ class Category extends Component {
             loggedIn
               ? <AddCategory
                 accessToken={accessToken}
-                onAddCategory={this.addCategory}
+                onAddCategory={this.refetchThenRedirect}
               />
               : <Redirect to="/login" />)}
           />
@@ -65,7 +43,7 @@ class Category extends Component {
               ? <EditCategory
                 accessToken={accessToken}
                 category={categories.find(category => category.id === Number(params.match.params.id))}
-                onEditCategory={this.editCategory}
+                onEditCategory={this.refetchThenRedirect}
               />
               : <Redirect to="/login" />)}
           />
@@ -74,7 +52,7 @@ class Category extends Component {
               accessToken={accessToken}
               userId={userId}
               category={categories.find(category => category.id === Number(params.match.params.id))}
-              onDeleteCategory={this.deleteCategory}
+              onDeleteCategory={this.refetchThenRedirect}
             />
           )}
           />
@@ -85,4 +63,15 @@ class Category extends Component {
   }
 }
 
-export default withRouter(Category);
+function mapStateToProps(state) {
+  return {
+    user: state.user,
+    categories: state.categories,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(actions, dispatch);
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Category));
