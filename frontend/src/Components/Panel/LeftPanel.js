@@ -3,11 +3,10 @@ import { Link, withRouter } from 'react-router-dom';
 
 class LeftPanel extends Component {
   handleClick(event, categoryId) {
-    event.preventDefault();
-    const { categories, history, onChangeState } = this.props;
+    //event.preventDefault();
+    const { categories, onChangeState } = this.props;
     const newState = { categories, visiting: categoryId };
     onChangeState(newState);
-    history.push(`/category/${categoryId}`);
   }
 
   renderButton() {

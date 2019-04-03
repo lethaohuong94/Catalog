@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { post } from '../../Helpers/fetchHelpers';
 import { showErrorToast, showSuccessToast, validateTextInput } from '../../Helpers/helpers';
@@ -42,15 +43,12 @@ class Register extends Component {
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('User created successfully');
-        const state = {
-          user: {
-            userId: response.id,
-            userName: name,
-            loggedIn: true,
-            accessToken: response.access_token,
-          } };
-        const { onChangeState } = this.props;
-        onChangeState(state);
+        const userInfo = {
+          userId: response.id,
+          userName: name,
+          accessToken: response.access_token,
+        };
+        this.props.login(userInfo);
       });
   }
 

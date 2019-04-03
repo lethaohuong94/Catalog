@@ -1,17 +1,11 @@
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 
 class Header extends Component {
   handleLogout() {
-    const { onChangeState, history } = this.props;
-    const newState = {
-      user: {
-        loggedIn: false,
-        userId: 0,
-        userName: '',
-        accessToken: '',
-      } };
-    onChangeState(newState);
+    const { history } = this.props;
+    this.props.logout();
     history.push('/');
   }
 
@@ -28,7 +22,7 @@ class Header extends Component {
     return (
       <div className="button-container">
         <Link className="button" to="/changepassword">Change Password</Link>
-        <button type="button" className="button" onClick={e => this.handleLogout(e)}>
+        <button type="button" className="button" onClick={() => this.handleLogout()}>
               Log out
         </button>
         <h5>{`user id: ${user.userId}`}</h5>

@@ -37,15 +37,13 @@ class LogIn extends Component {
     post('/auth', { name, password })
       .then((response) => {
         if (!response.successful) return;
-        const newState = {
-          user: {
-            userId: response.id,
-            userName: name,
-            loggedIn: true,
-            accessToken: response.access_token,
-          } };
-        this.props.onChangeState(newState);
+        const userInfo = {
+          userId: response.id,
+          userName: name,
+          accessToken: response.access_token,
+        };
         showSuccessToast('Log in successfully');
+        this.props.login(userInfo);
       });
   }
 

@@ -1,9 +1,16 @@
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { del } from '../../Helpers/fetchHelpers';
 import { showSuccessToast } from '../../Helpers/helpers';
 
 class ViewCategory extends Component {
+  // componentDidUpdate() {
+  //   if (this.props.category) {
+  //     this.props.onVisit(this.props.category.id);
+  //   }
+  // }
+
   handleDelete(event) {
     event.preventDefault();
     const { accessToken, category, onDeleteCategory } = this.props;
