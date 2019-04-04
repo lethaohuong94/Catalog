@@ -1,13 +1,21 @@
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 
 class LeftPanel extends Component {
-  // handleClick(event, categoryId) {
-  //   //event.preventDefault();
-  //   const { categories, onChangeState } = this.props;
-  //   const newState = { categories, visiting: categoryId };
-  //   onChangeState(newState);
-  // }
+  visitingId = () => {
+    try {
+      const path = this.props.location.pathname;
+      const found1 = path.match(/\/category\/\d?/);
+      if (found1) {
+        const found2 = path.match(/\d+/);
+        return Number(found2.join());
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
 
   renderButton() {
     return (
@@ -16,7 +24,8 @@ class LeftPanel extends Component {
   }
 
   renderList() {
-    const { categories, visiting } = this.props;
+    const { categories } = this.props;
+    const visiting = this.visitingId();
     return (
       <ul>
         {categories.map(category => (
