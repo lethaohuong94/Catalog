@@ -12,11 +12,3 @@ export function logout() {
     type: 'LOG_OUT',
   };
 }
-
-//category update
-export function updateCategories(categories) {
-  return {
-    type: 'UPDATE_CATEGORIES',
-    categories,
-  };
-}
