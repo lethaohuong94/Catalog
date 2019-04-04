@@ -1,20 +1,20 @@
+/* eslint-disable no-alert */
 import React, { Component } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Redirect, withRouter } from 'react-router-dom';
 import { del } from '../../Helpers/fetchHelpers';
 import { showSuccessToast } from '../../Helpers/helpers';
 
 class ViewItem extends Component {
-  //TODO: change function name
   handleDelete(event) {
     if (!(window.confirm('Are you sure you wish to delete this item?'))) return;
     event.preventDefault();
-    const { accessToken, category, itemId, onDeleteItem } = this.props;
+    const { accessToken, category, itemId, onDeleteItem, history } = this.props;
 
     del(`/items/${itemId}`, accessToken)
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Item is successfully deleted');
-        onDeleteItem(`/category/${category.id}`);
+        onDeleteItem().then(() => history.push(`/category/${category.id}`));
       });
   }
 
@@ -62,4 +62,4 @@ class ViewItem extends Component {
   }
 }
 
-export default ViewItem;
+export default withRouter(ViewItem);

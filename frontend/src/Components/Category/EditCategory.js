@@ -22,7 +22,7 @@ class EditCategory extends Component {
   }
 
   handleSubmit() {
-    const { accessToken, category, onEditCategory } = this.props;
+    const { accessToken, category, onEditCategory, history } = this.props;
     const { name } = this.state;
 
     try {
@@ -36,7 +36,7 @@ class EditCategory extends Component {
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Category is successfully updated');
-        onEditCategory(`/category/${response.id}`);
+        onEditCategory().then(() => history.push(`/category/${response.id}`));
       });
   }
 

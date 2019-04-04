@@ -5,23 +5,22 @@
 import React, { Component } from 'react';
 import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+//import { bindActionCreators } from 'redux';
 import ViewCategory from './ViewCategory';
 import AddCategory from './AddCategory';
 import EditCategory from './EditCategory';
-import * as actions from '../../actions';
+import { updateCategories } from '../../Actions/categoryAction';
 import { get } from '../../Helpers/fetchHelpers';
 
 class Category extends Component {
   constructor(props) {
     super(props);
-    this.refetchThenRedirect = this.refetchThenRedirect.bind(this);
+    this.refetch = this.refetch.bind(this);
   }
 
-  async refetchThenRedirect(newPath) {
+  async refetch() {
     const categories = await get('/categories').then(json => json);
     this.props.updateCategories(categories);
-    this.props.history.push(newPath);
   }
 
   render() {
@@ -34,7 +33,7 @@ class Category extends Component {
             loggedIn
               ? <AddCategory
                 accessToken={accessToken}
-                onAddCategory={this.refetchThenRedirect}
+                onAddCategory={this.refetch}
               />
               : <Redirect to="/login" />)}
           />
@@ -43,7 +42,7 @@ class Category extends Component {
               ? <EditCategory
                 accessToken={accessToken}
                 category={categories.find(category => category.id === Number(params.match.params.id))}
-                onEditCategory={this.refetchThenRedirect}
+                onEditCategory={this.refetch}
               />
               : <Redirect to="/login" />)}
           />
@@ -52,7 +51,7 @@ class Category extends Component {
               accessToken={accessToken}
               userId={userId}
               category={categories.find(category => category.id === Number(params.match.params.id))}
-              onDeleteCategory={this.refetchThenRedirect}
+              onDeleteCategory={this.refetch}
             />
           )}
           />
@@ -70,8 +69,12 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(actions, dispatch);
-}
+// function mapDispatchToProps(dispatch) {
+//   return bindActionCreators(actions, dispatch);
+// }
+
+const mapDispatchToProps = {
+  updateCategories,
+};
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Category));

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { post } from '../../Helpers/fetchHelpers';
 import { showSuccessToast, showErrorToast, validateTextInput } from '../../Helpers/helpers';
 
@@ -8,12 +9,10 @@ class AddItem extends Component {
     this.state = { name: '', description: '' };
   }
 
-  handleChangeName(event) {
-    this.setState({ name: event.target.value });
-  }
-
-  handleChangeDescription(event) {
-    this.setState({ description: event.target.value });
+  handleInputChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    this.setState({ [name]: value });
   }
 
   handleKeyPress(event) {
@@ -23,7 +22,7 @@ class AddItem extends Component {
   }
 
   handleSubmit() {
-    const { accessToken, categoryId, onAddItem } = this.props;
+    const { accessToken, categoryId, onAddItem, history } = this.props;
     const { name, description } = this.state;
 
     try {
@@ -38,7 +37,7 @@ class AddItem extends Component {
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Item is successfully created');
-        onAddItem(`/category/${categoryId}`);
+        onAddItem().then(() => history.push(`/category/${categoryId}`));
       });
   }
 
@@ -52,8 +51,8 @@ class AddItem extends Component {
     return (
       <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
         <h5>Please fill the form</h5>
-        <input type="text" placeholder="Item name" onChange={e => this.handleChangeName(e)} />
-        <input type="text" placeholder="Item description" onChange={e => this.handleChangeDescription(e)} />
+        <input type="text" placeholder="Item name" name="name" onChange={this.handleInputChange} />
+        <input type="text" placeholder="Item description" name="description" onChange={this.handleInputChange} />
         <button type="submit" onClick={e => this.handleSubmit(e)}> Add </button>
       </div>
     );
@@ -69,4 +68,4 @@ class AddItem extends Component {
   }
 }
 
-export default AddItem;
+export default withRouter(AddItem);

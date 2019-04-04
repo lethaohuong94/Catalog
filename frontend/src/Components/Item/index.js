@@ -6,45 +6,21 @@
 import React, { Component } from 'react';
 import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import ViewItem from './ViewItem';
 import AddItem from './AddItem';
 import EditItem from './EditItem';
-import * as actions from '../../actions';
+import { updateCategories } from '../../Actions/categoryAction';
 import { get } from '../../Helpers/fetchHelpers';
 
 class Item extends Component {
   constructor(props) {
     super(props);
-    //if (this.props.categories) this.categories = this.props.categories;
-    // this.addItem = this.addItem.bind(this);
-    // this.deleteItem = this.deleteItem.bind(this);
-    // this.editItem = this.editItem.bind(this);
-    this.refetchThenRedirect = this.refetchThenRedirect.bind(this);
+    this.refetch = this.refetch.bind(this);
   }
 
-  // async addItem(newPath) {
-  //   const categories = await get('/categories').then(json => json);
-  //   this.props.updateCategories(categories);
-  //   this.props.history.push(newPath);
-  // }
-
-  // async deleteItem(newPath) {
-  //   const categories = await get('/categories').then(json => json);
-  //   this.props.updateCategories(categories);
-  //   this.props.history.push(newPath);
-  // }
-
-  // async editItem(newPath) {
-  //   const categories = await get('/categories').then(json => json);
-  //   this.props.updateCategories(categories);
-  //   this.props.history.push(newPath);
-  // }
-
-  async refetchThenRedirect(newPath) {
+  async refetch() {
     const categories = await get('/categories').then(json => json);
     this.props.updateCategories(categories);
-    this.props.history.push(newPath);
   }
 
   render() {
@@ -56,11 +32,11 @@ class Item extends Component {
           <Route path="/category/:categoryid/item/:itemid" exact render={params => (
             <ViewItem
               accessToken={accessToken}
+              userId={userId}
               categoryId={params.match.params.categoryid}
               itemId={params.match.params.itemid}
               category={categories.find(category => category.id === Number(params.match.params.categoryid))}
-              onDeleteItem={this.refetchThenRedirect}
-              userId={userId}
+              onDeleteItem={this.refetch}
             />
           )}
           />
@@ -69,7 +45,7 @@ class Item extends Component {
               ? <AddItem
                 accessToken={accessToken}
                 categoryId={params.match.params.categoryid}
-                onAddItem={this.refetchThenRedirect}
+                onAddItem={this.refetch}
               />
               : <Redirect to="/login" />)}
           />
@@ -80,7 +56,7 @@ class Item extends Component {
                 categories={categories}
                 categoryId={params.match.params.categoryid}
                 itemId={params.match.params.itemid}
-                onEditItem={this.refetchThenRedirect}
+                onEditItem={this.refetch}
               />
               : <Redirect to="/login" />)}
           />
@@ -98,8 +74,12 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(actions, dispatch);
-}
+// function mapDispatchToProps(dispatch) {
+//   return bindActionCreators(actions, dispatch);
+// }
+
+const mapDispatchToProps = {
+  updateCategories,
+};
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Item));

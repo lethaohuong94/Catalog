@@ -2,11 +2,10 @@
 /* eslint-disable no-param-reassign */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';
 import { get } from '../../Helpers/fetchHelpers';
-import * as actions from '../../actions';
+import { updateCategories } from '../../Actions/categoryAction';
 
 class Panel extends Component {
   componentDidMount() {
@@ -19,11 +18,9 @@ class Panel extends Component {
 
   render() {
     const { categories } = this.props;
-    console.log('panel index');
-    console.log(this.props.categories);
     if (categories.length > 0) {
       return (
-        <div className="panel">
+        <div>
           <LeftPanel categories={categories} />
           <RightPanel />
         </div>
@@ -40,8 +37,8 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(actions, dispatch);
-}
+const mapDispatchToProps = {
+  updateCategories,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Panel);

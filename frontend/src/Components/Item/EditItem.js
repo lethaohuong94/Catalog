@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { put } from '../../Helpers/fetchHelpers';
 import { showSuccessToast, showErrorToast, validateTextInput } from '../../Helpers/helpers';
 
@@ -23,20 +24,14 @@ class EditItem extends Component {
     }
   }
 
-  handleChangeName(event) {
-    this.setState({ name: event.target.value });
-  }
-
-  handleChangeDescription(event) {
-    this.setState({ description: event.target.value });
-  }
-
-  handleChangeCategory(event) {
-    this.setState({ categoryId: event.target.value });
+  handleInputChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    this.setState({ [name]: value });
   }
 
   handleSubmit() {
-    const { accessToken, itemId, onEditItem } = this.props;
+    const { accessToken, itemId, onEditItem, history } = this.props;
     const { name, description, categoryId } = this.state;
 
     try {
@@ -51,7 +46,7 @@ class EditItem extends Component {
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Item is successfully updated');
-        onEditItem(`/category/${response.category_id}/item/${response.id}`);
+        onEditItem().then(() => history.push(`/category/${response.category_id}/item/${response.id}`));
       });
   }
 
@@ -67,9 +62,9 @@ class EditItem extends Component {
     return (
       <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
         <h5>Please fill the form</h5>
-        <input type="text" placeholder="New name" value={name} onChange={e => this.handleChangeName(e)} />
-        <input type="text" placeholder="New description" value={description} onChange={e => this.handleChangeDescription(e)} />
-        <select name="category" value={categoryId} onChange={e => this.handleChangeCategory(e)}>
+        <input type="text" placeholder="New name" name="name" value={name} onChange={this.handleInputChange} />
+        <input type="text" placeholder="New description" name="description" value={description} onChange={this.handleInputChange} />
+        <select name="categoryId" value={categoryId} onChange={this.handleInputChange}>
           {categories.map(category => <option key={category.id} value={category.id}>{category.name}</option>)}
         </select>
         <button type="submit" onClick={e => this.handleSubmit(e)}> Save change </button>
@@ -87,4 +82,4 @@ class EditItem extends Component {
   }
 }
 
-export default EditItem;
+export default withRouter(EditItem);

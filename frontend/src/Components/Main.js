@@ -1,11 +1,15 @@
+/* eslint-disable arrow-body-style */
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+
 import Header from './Header';
 import Panel from './Panel';
 import Register from './User/Register';
 import LogIn from './User/LogIn';
 import ChangePassword from './User/ChangePassword';
+import { login, logout } from '../Actions/userAction';
 
 class Main extends Component {
   renderLoggedIn() {
@@ -29,8 +33,8 @@ class Main extends Component {
       <div>
         <Header user={user} onChangeState={this.changeState} />
         <Switch>
-          <Route path="/register" exact render={() => <Register login={e => this.props.login(e)} />} />
-          <Route path="/login" exact render={() => <LogIn login={e => this.props.login(e)} />} />
+          <Route path="/register" exact render={() => <Register login={this.props.login} />} />
+          <Route path="/login" exact render={() => <LogIn login={this.props.login} />} />
           <Route path="/changepassword" exact render={() => <Redirect to="/login" />} />
           <Route render={() => <Panel user={user} />} />
         </Switch>
@@ -56,4 +60,16 @@ class Main extends Component {
   }
 }
 
-export default Main;
+function mapStateToProps(state) {
+  return {
+    user: state.user,
+    categories: state.categories,
+  };
+}
+
+const mapDispatchToProps = {
+  login,
+  logout,
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main));

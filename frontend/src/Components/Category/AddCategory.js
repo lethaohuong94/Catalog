@@ -9,7 +9,7 @@ class AddCategory extends Component {
     this.state = { name: '' };
   }
 
-  handleChangeName(event) {
+  handleChangeName = (event) => {
     this.setState({ name: event.target.value });
   }
 
@@ -19,8 +19,8 @@ class AddCategory extends Component {
     }
   }
 
-  async handleSubmit() {
-    const { accessToken, onAddCategory } = this.props;
+  handleSubmit() {
+    const { accessToken, onAddCategory, history } = this.props;
     const { name } = this.state;
 
     try {
@@ -35,7 +35,7 @@ class AddCategory extends Component {
         if (!response.successful) return;
         showSuccessToast('Category is successfully created');
         delete response.successful;
-        onAddCategory(`/category/${response.id}`);
+        onAddCategory().then(() => history.push(`/category/${response.id}`));
       });
   }
 
@@ -49,7 +49,7 @@ class AddCategory extends Component {
     return (
       <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
         <h5>Please fill the form</h5>
-        <input type="text" placeholder="Category name" onChange={e => this.handleChangeName(e)} />
+        <input type="text" name="name" placeholder="Category name" onChange={this.handleChangeName} />
         <button type="submit" onClick={e => this.handleSubmit(e)}> Add </button>
       </div>
     );
