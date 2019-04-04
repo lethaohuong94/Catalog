@@ -5,16 +5,16 @@ import { del } from '../../Helpers/fetchHelpers';
 import { showSuccessToast } from '../../Helpers/helpers';
 
 class ViewItem extends Component {
-  handleDelete(event) {
+  handleDelete = (event) => {
     if (!(window.confirm('Are you sure you wish to delete this item?'))) return;
     event.preventDefault();
-    const { accessToken, category, itemId, onDeleteItem, history } = this.props;
+    const { accessToken, category, itemId, onRefetch, history } = this.props;
 
     del(`/items/${itemId}`, accessToken)
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Item is successfully deleted');
-        onDeleteItem().then(() => history.push(`/category/${category.id}`));
+        onRefetch().then(() => history.push(`/category/${category.id}`));
       });
   }
 
@@ -24,7 +24,7 @@ class ViewItem extends Component {
       return (
         <div className="button-container">
           <Link className="small-button" to={`/category/${category.id}/item/${itemId}/edit`}>Edit Item</Link>
-          <button type="button" className="small-button" onClick={e => this.handleDelete(e)}>delete item</button>
+          <button type="button" className="small-button" onClick={this.handleDelete}>delete item</button>
         </div>
       );
     }

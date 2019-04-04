@@ -5,15 +5,15 @@ import { del } from '../../Helpers/fetchHelpers';
 import { showSuccessToast } from '../../Helpers/helpers';
 
 class ViewCategory extends Component {
-  handleDelete(event) {
+  handleDelete = (event) => {
     event.preventDefault();
-    const { accessToken, category, onDeleteCategory, history } = this.props;
+    const { accessToken, category, onRefetch, history } = this.props;
 
     del(`/categories/${category.id}`, accessToken)
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Category is successfully deleted');
-        onDeleteCategory();
+        onRefetch();
         history.push('/');
       });
   }

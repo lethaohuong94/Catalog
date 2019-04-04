@@ -18,7 +18,7 @@ class EditItem extends Component {
     }
   }
 
-  handleKeyPress(event) {
+  handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       this.handleSubmit(event);
     }
@@ -30,8 +30,8 @@ class EditItem extends Component {
     this.setState({ [name]: value });
   }
 
-  handleSubmit() {
-    const { accessToken, itemId, onEditItem, history } = this.props;
+  handleSubmit = () => {
+    const { accessToken, itemId, onRefetch, history } = this.props;
     const { name, description, categoryId } = this.state;
 
     try {
@@ -46,7 +46,7 @@ class EditItem extends Component {
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Item is successfully updated');
-        onEditItem().then(() => history.push(`/category/${response.category_id}/item/${response.id}`));
+        onRefetch().then(() => history.push(`/category/${response.category_id}/item/${response.id}`));
       });
   }
 
@@ -60,14 +60,14 @@ class EditItem extends Component {
     const { categories } = this.props;
     const { name, description, categoryId } = this.state;
     return (
-      <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
+      <div className="form" onKeyPress={this.handleKeyPress}>
         <h5>Please fill the form</h5>
         <input type="text" placeholder="New name" name="name" value={name} onChange={this.handleInputChange} />
         <input type="text" placeholder="New description" name="description" value={description} onChange={this.handleInputChange} />
         <select name="categoryId" value={categoryId} onChange={this.handleInputChange}>
           {categories.map(category => <option key={category.id} value={category.id}>{category.name}</option>)}
         </select>
-        <button type="submit" onClick={e => this.handleSubmit(e)}> Save change </button>
+        <button type="submit" onClick={this.handleSubmit}> Save change </button>
       </div>
     );
   }

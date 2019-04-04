@@ -13,14 +13,14 @@ class AddCategory extends Component {
     this.setState({ name: event.target.value });
   }
 
-  handleKeyPress(event) {
+  handleKeyPress= (event) => {
     if (event.key === 'Enter') {
       this.handleSubmit(event);
     }
   }
 
-  handleSubmit() {
-    const { accessToken, onAddCategory, history } = this.props;
+  handleSubmit = () => {
+    const { accessToken, onRefetch, history } = this.props;
     const { name } = this.state;
 
     try {
@@ -35,7 +35,7 @@ class AddCategory extends Component {
         if (!response.successful) return;
         showSuccessToast('Category is successfully created');
         delete response.successful;
-        onAddCategory().then(() => history.push(`/category/${response.id}`));
+        onRefetch().then(() => history.push(`/category/${response.id}`));
       });
   }
 
@@ -47,10 +47,10 @@ class AddCategory extends Component {
 
   renderForm() {
     return (
-      <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
+      <div className="form" onKeyPress={this.handleKeyPress}>
         <h5>Please fill the form</h5>
         <input type="text" name="name" placeholder="Category name" onChange={this.handleChangeName} />
-        <button type="submit" onClick={e => this.handleSubmit(e)}> Add </button>
+        <button type="submit" onClick={this.handleSubmit}> Add </button>
       </div>
     );
   }

@@ -6,6 +6,6 @@ import { Provider } from 'react-redux';
 import './Styles/stylesheet.css';
 import 'toastr/build/toastr.min.css';
 import Main from './Components/Main';
-import store from './store';
+import store from './Stores/store';
 
 ReactDOM.render(<Provider store={store}><BrowserRouter><Main /></BrowserRouter></Provider>, document.getElementById('root'));

@@ -1,4 +1,3 @@
-/* eslint-disable arrow-body-style */
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { Route, Switch, Redirect, withRouter } from 'react-router-dom';

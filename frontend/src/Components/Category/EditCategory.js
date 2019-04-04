@@ -11,18 +11,18 @@ class EditCategory extends Component {
     if (this.props.category) this.state = { name: this.props.category.name };
   }
 
-  handleChangeName(event) {
+  handleChangeName = (event) => {
     this.setState({ name: event.target.value });
   }
 
-  handleKeyPress(event) {
+  handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       this.handleSubmit(event);
     }
   }
 
-  handleSubmit() {
-    const { accessToken, category, onEditCategory, history } = this.props;
+  handleSubmit = () => {
+    const { accessToken, category, onRefetch, history } = this.props;
     const { name } = this.state;
 
     try {
@@ -36,7 +36,7 @@ class EditCategory extends Component {
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Category is successfully updated');
-        onEditCategory().then(() => history.push(`/category/${response.id}`));
+        onRefetch().then(() => history.push(`/category/${response.id}`));
       });
   }
 
@@ -47,11 +47,12 @@ class EditCategory extends Component {
   }
 
   renderForm() {
+    const { name } = this.state;
     return (
-      <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
+      <div className="form" onKeyPress={this.handleKeyPress}>
         <h5>Please fill the form</h5>
-        <input type="text" placeholder="New name" value={this.state.name} onChange={e => this.handleChangeName(e)} />
-        <button type="submit" onClick={e => this.handleSubmit(e)}> Save change </button>
+        <input type="text" placeholder="New name" value={name} onChange={this.handleChangeName} />
+        <button type="submit" onClick={this.handleSubmit}> Save change </button>
       </div>
     );
   }

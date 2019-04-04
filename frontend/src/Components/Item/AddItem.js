@@ -15,14 +15,14 @@ class AddItem extends Component {
     this.setState({ [name]: value });
   }
 
-  handleKeyPress(event) {
+  handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       this.handleSubmit(event);
     }
   }
 
-  handleSubmit() {
-    const { accessToken, categoryId, onAddItem, history } = this.props;
+  handleSubmit = () => {
+    const { accessToken, categoryId, onRefetch, history } = this.props;
     const { name, description } = this.state;
 
     try {
@@ -37,7 +37,7 @@ class AddItem extends Component {
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Item is successfully created');
-        onAddItem().then(() => history.push(`/category/${categoryId}`));
+        onRefetch().then(() => history.push(`/category/${categoryId}`));
       });
   }
 
@@ -49,11 +49,11 @@ class AddItem extends Component {
 
   renderForm() {
     return (
-      <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
+      <div className="form" onKeyPress={this.handleKeyPress}>
         <h5>Please fill the form</h5>
         <input type="text" placeholder="Item name" name="name" onChange={this.handleInputChange} />
         <input type="text" placeholder="Item description" name="description" onChange={this.handleInputChange} />
-        <button type="submit" onClick={e => this.handleSubmit(e)}> Add </button>
+        <button type="submit" onClick={this.handleSubmit}> Add </button>
       </div>
     );
   }

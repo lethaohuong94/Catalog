@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 
 class Header extends Component {
-  handleLogout() {
+  handleLogout = () => {
     const { history } = this.props;
     this.props.logout();
     history.push('/');
@@ -22,7 +22,7 @@ class Header extends Component {
     return (
       <div className="button-container">
         <Link className="button" to="/changepassword">Change Password</Link>
-        <button type="button" className="button" onClick={() => this.handleLogout()}>
+        <button type="button" className="button" onClick={this.handleLogout}>
               Log out
         </button>
         <h5>{`user id: ${user.userId}`}</h5>

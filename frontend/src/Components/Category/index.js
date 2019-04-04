@@ -33,7 +33,7 @@ class Category extends Component {
             loggedIn
               ? <AddCategory
                 accessToken={accessToken}
-                onAddCategory={this.refetch}
+                onRefetch={this.refetch}
               />
               : <Redirect to="/login" />)}
           />
@@ -42,7 +42,7 @@ class Category extends Component {
               ? <EditCategory
                 accessToken={accessToken}
                 category={categories.find(category => category.id === Number(params.match.params.id))}
-                onEditCategory={this.refetch}
+                onRefetch={this.refetch}
               />
               : <Redirect to="/login" />)}
           />
@@ -51,7 +51,7 @@ class Category extends Component {
               accessToken={accessToken}
               userId={userId}
               category={categories.find(category => category.id === Number(params.match.params.id))}
-              onDeleteCategory={this.refetch}
+              onRefetch={this.refetch}
             />
           )}
           />
@@ -68,10 +68,6 @@ function mapStateToProps(state) {
     categories: state.categories,
   };
 }
-
-// function mapDispatchToProps(dispatch) {
-//   return bindActionCreators(actions, dispatch);
-// }
 
 const mapDispatchToProps = {
   updateCategories,

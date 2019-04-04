@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/jsx-wrap-multilines */
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -36,7 +35,7 @@ class Item extends Component {
               categoryId={params.match.params.categoryid}
               itemId={params.match.params.itemid}
               category={categories.find(category => category.id === Number(params.match.params.categoryid))}
-              onDeleteItem={this.refetch}
+              onRefetch={this.refetch}
             />
           )}
           />
@@ -45,7 +44,7 @@ class Item extends Component {
               ? <AddItem
                 accessToken={accessToken}
                 categoryId={params.match.params.categoryid}
-                onAddItem={this.refetch}
+                onRefetch={this.refetch}
               />
               : <Redirect to="/login" />)}
           />
@@ -56,7 +55,7 @@ class Item extends Component {
                 categories={categories}
                 categoryId={params.match.params.categoryid}
                 itemId={params.match.params.itemid}
-                onEditItem={this.refetch}
+                onRefetch={this.refetch}
               />
               : <Redirect to="/login" />)}
           />
@@ -73,10 +72,6 @@ function mapStateToProps(state) {
     categories: state.categories,
   };
 }
-
-// function mapDispatchToProps(dispatch) {
-//   return bindActionCreators(actions, dispatch);
-// }
 
 const mapDispatchToProps = {
   updateCategories,
