@@ -1,7 +1,9 @@
+/* eslint-disable react/button-has-type */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { showErrorToast, showSuccessToast, validateTextInput } from '../../Helpers/helpers';
-import { post, put } from '../../Helpers/fetchHelpers';
+import { showErrorToast, showSuccessToast } from '../../helpers/toaster';
+import { validateTextInput } from '../../helpers/validators';
+import { post, put } from '../../helpers/fetch';
 
 class ChangePassword extends Component {
   constructor(props) {
@@ -9,25 +11,19 @@ class ChangePassword extends Component {
     this.state = { oldPassword: '', newPassword: '', confirmPassword: '' };
   }
 
-  handleKeyPress(event) {
+  handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       this.handleSubmit(event);
     }
   }
 
-  handleChangeOldPassword(event) {
-    this.setState({ oldPassword: event.target.value });
+  handleInputChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    this.setState({ [name]: value });
   }
 
-  handleChangeNewPassword(event) {
-    this.setState({ newPassword: event.target.value });
-  }
-
-  handleChangeConfirmPassword(event) {
-    this.setState({ confirmPassword: event.target.value });
-  }
-
-  handleSubmit() {
+  handleSubmit = () => {
     const { user, history } = this.props;
     const { userId, userName, accessToken } = user;
     const { oldPassword, newPassword, confirmPassword } = this.state;
@@ -56,22 +52,18 @@ class ChangePassword extends Component {
 
   renderForm() {
     return (
-      <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
+      <div className="form" onKeyPress={this.handleKeyPress}>
         <h5>Please fill the form</h5>
-        <input type="password" placeholder="Old Password" onChange={e => this.handleChangeOldPassword(e)} />
-        <input type="password" placeholder="New Password" onChange={e => this.handleChangeNewPassword(e)} />
-        <input type="password" placeholder="Confirm New Password" onChange={e => this.handleChangeConfirmPassword(e)} />
-        <button type="submit" onClick={e => this.handleSubmit(e)}> Change Password </button>
+        <input type="password" placeholder="Old Password" name="oldPassword" onChange={this.handleInputChange} />
+        <input type="password" placeholder="New Password" name="newPassword" onChange={this.handleInputChange} />
+        <input type="password" placeholder="Confirm New Password" name="confirmPassword" onChange={this.handleInputChange} />
+        <button onClick={this.handleSubmit}> Change Password </button>
       </div>
     );
   }
 
   render() {
-    return (
-      <div>
-        {this.renderForm()}
-      </div>
-    );
+    return this.renderForm();
   }
 }
 

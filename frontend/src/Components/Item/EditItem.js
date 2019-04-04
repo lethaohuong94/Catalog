@@ -1,7 +1,9 @@
+/* eslint-disable react/button-has-type */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { put } from '../../Helpers/fetchHelpers';
-import { showSuccessToast, showErrorToast, validateTextInput } from '../../Helpers/helpers';
+import { put } from '../../helpers/fetch';
+import { showSuccessToast, showErrorToast } from '../../helpers/toaster';
+import { validateTextInput } from '../../helpers/validators';
 
 class EditItem extends Component {
   constructor(props) {
@@ -67,7 +69,7 @@ class EditItem extends Component {
         <select name="categoryId" value={categoryId} onChange={this.handleInputChange}>
           {categories.map(category => <option key={category.id} value={category.id}>{category.name}</option>)}
         </select>
-        <button type="submit" onClick={this.handleSubmit}> Save change </button>
+        <button onClick={this.handleSubmit}> Save change </button>
       </div>
     );
   }

@@ -1,7 +1,9 @@
+/* eslint-disable react/button-has-type */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { post } from '../../Helpers/fetchHelpers';
-import { showSuccessToast, showErrorToast, validateTextInput } from '../../Helpers/helpers';
+import { post } from '../../helpers/fetch';
+import { showSuccessToast, showErrorToast } from '../../helpers/toaster';
+import { validateTextInput } from '../../helpers/validators';
 
 class AddItem extends Component {
   constructor(props) {
@@ -53,7 +55,7 @@ class AddItem extends Component {
         <h5>Please fill the form</h5>
         <input type="text" placeholder="Item name" name="name" onChange={this.handleInputChange} />
         <input type="text" placeholder="Item description" name="description" onChange={this.handleInputChange} />
-        <button type="submit" onClick={this.handleSubmit}> Add </button>
+        <button onClick={this.handleSubmit}> Add </button>
       </div>
     );
   }

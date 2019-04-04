@@ -8,15 +8,11 @@ import { connect } from 'react-redux';
 import ViewItem from './ViewItem';
 import AddItem from './AddItem';
 import EditItem from './EditItem';
-import { updateCategories } from '../../Actions/categoryAction';
-import { get } from '../../Helpers/fetchHelpers';
+import { updateCategories } from '../../actions/category';
+import { get } from '../../helpers/fetch';
 
 class Item extends Component {
-  constructor(props) {
-    super(props);
-    this.refetch = this.refetch.bind(this);
-  }
-
+  //async does not allowed to be writen as arrow
   async refetch() {
     const categories = await get('/categories').then(json => json);
     this.props.updateCategories(categories);
@@ -35,7 +31,7 @@ class Item extends Component {
               categoryId={params.match.params.categoryid}
               itemId={params.match.params.itemid}
               category={categories.find(category => category.id === Number(params.match.params.categoryid))}
-              onRefetch={this.refetch}
+              onRefetch={() => this.refetch()}
             />
           )}
           />
@@ -44,7 +40,7 @@ class Item extends Component {
               ? <AddItem
                 accessToken={accessToken}
                 categoryId={params.match.params.categoryid}
-                onRefetch={this.refetch}
+                onRefetch={() => this.refetch()}
               />
               : <Redirect to="/login" />)}
           />
@@ -55,7 +51,7 @@ class Item extends Component {
                 categories={categories}
                 categoryId={params.match.params.categoryid}
                 itemId={params.match.params.itemid}
-                onRefetch={this.refetch}
+                onRefetch={() => this.refetch()}
               />
               : <Redirect to="/login" />)}
           />
@@ -66,12 +62,10 @@ class Item extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    user: state.user,
-    categories: state.categories,
-  };
-}
+const mapStateToProps = state => ({
+  user: state.user,
+  categories: state.categories,
+});
 
 const mapDispatchToProps = {
   updateCategories,

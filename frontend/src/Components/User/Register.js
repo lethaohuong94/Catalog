@@ -1,7 +1,8 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
-import { post } from '../../Helpers/fetchHelpers';
-import { showErrorToast, showSuccessToast, validateTextInput } from '../../Helpers/helpers';
+import { post } from '../../helpers/fetch';
+import { showErrorToast, showSuccessToast } from '../../helpers/toaster';
+import { validateTextInput } from '../../helpers/validators';
 
 class Register extends Component {
   constructor(props) {
@@ -15,19 +16,13 @@ class Register extends Component {
     }
   }
 
-  handleChangeName(event) {
-    this.setState({ name: event.target.value });
+  handleInputChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    this.setState({ [name]: value });
   }
 
-  handleChangePassword(event) {
-    this.setState({ password: event.target.value });
-  }
-
-  handleChangeConfirmPassword(event) {
-    this.setState({ confirmPassword: event.target.value });
-  }
-
-  handleSubmit() {
+  handleSubmit = () => {
     const { name, password, confirmPassword } = this.state;
 
     try {
@@ -54,22 +49,18 @@ class Register extends Component {
 
   renderForm() {
     return (
-      <div className="form" onKeyPress={e => this.handleKeyPress(e)}>
+      <div className="form" onKeyPress={this.handleKeyPress}>
         <h5>Please fill the form</h5>
-        <input type="text" placeholder="Username" onChange={e => this.handleChangeName(e)} />
-        <input type="password" placeholder="Password" onChange={e => this.handleChangePassword(e)} />
-        <input type="password" placeholder="Confirm Password" onChange={e => this.handleChangeConfirmPassword(e)} />
-        <button type="submit" onClick={e => this.handleSubmit(e)}> Register </button>
+        <input type="text" placeholder="Username" name="name" onChange={this.handleInputChange} />
+        <input type="password" placeholder="Password" name="password" onChange={this.handleInputChange} />
+        <input type="password" placeholder="Confirm Password" name="confirmPassword" onChange={this.handleInputChange} />
+        <button type="submit" onClick={this.handleSubmit}> Register </button>
       </div>
     );
   }
 
   render() {
-    return (
-      <div>
-        {this.renderForm()}
-      </div>
-    );
+    return this.renderForm();
   }
 }
 

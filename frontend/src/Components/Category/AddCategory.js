@@ -1,7 +1,9 @@
+/* eslint-disable react/button-has-type */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { post } from '../../Helpers/fetchHelpers';
-import { showSuccessToast, validateTextInput, showErrorToast } from '../../Helpers/helpers';
+import { post } from '../../helpers/fetch';
+import { showSuccessToast, showErrorToast } from '../../helpers/toaster';
+import { validateTextInput } from '../../helpers/validators';
 
 class AddCategory extends Component {
   constructor(props) {
@@ -9,8 +11,10 @@ class AddCategory extends Component {
     this.state = { name: '' };
   }
 
-  handleChangeName = (event) => {
-    this.setState({ name: event.target.value });
+  handleInputChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    this.setState({ [name]: value });
   }
 
   handleKeyPress= (event) => {
@@ -49,8 +53,8 @@ class AddCategory extends Component {
     return (
       <div className="form" onKeyPress={this.handleKeyPress}>
         <h5>Please fill the form</h5>
-        <input type="text" name="name" placeholder="Category name" onChange={this.handleChangeName} />
-        <button type="submit" onClick={this.handleSubmit}> Add </button>
+        <input type="text" name="name" placeholder="Category name" onChange={this.handleInputChange} />
+        <button onClick={this.handleSubmit}> Add </button>
       </div>
     );
   }

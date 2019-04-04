@@ -1,13 +1,12 @@
 /* eslint-disable no-alert */
 import React, { Component } from 'react';
 import { Link, Redirect, withRouter } from 'react-router-dom';
-import { del } from '../../Helpers/fetchHelpers';
-import { showSuccessToast } from '../../Helpers/helpers';
+import { del } from '../../helpers/fetch';
+import { showSuccessToast } from '../../helpers/toaster';
 
 class ViewItem extends Component {
-  handleDelete = (event) => {
+  handleDelete = () => {
     if (!(window.confirm('Are you sure you wish to delete this item?'))) return;
-    event.preventDefault();
     const { accessToken, category, itemId, onRefetch, history } = this.props;
 
     del(`/items/${itemId}`, accessToken)

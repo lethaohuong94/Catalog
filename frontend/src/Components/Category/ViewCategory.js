@@ -1,12 +1,11 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { Link, Redirect, withRouter } from 'react-router-dom';
-import { del } from '../../Helpers/fetchHelpers';
-import { showSuccessToast } from '../../Helpers/helpers';
+import { del } from '../../helpers/fetch';
+import { showSuccessToast } from '../../helpers/toaster';
 
 class ViewCategory extends Component {
-  handleDelete = (event) => {
-    event.preventDefault();
+  handleDelete = () => {
     const { accessToken, category, onRefetch, history } = this.props;
 
     del(`/categories/${category.id}`, accessToken)

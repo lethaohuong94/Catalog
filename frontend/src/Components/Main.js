@@ -8,7 +8,7 @@ import Panel from './Panel';
 import Register from './User/Register';
 import LogIn from './User/LogIn';
 import ChangePassword from './User/ChangePassword';
-import { login, logout } from '../Actions/userAction';
+import { login, logout } from '../actions/user';
 
 class Main extends Component {
   renderLoggedIn() {
@@ -43,28 +43,14 @@ class Main extends Component {
 
   render() {
     const { user } = this.props;
-    if (user.loggedIn) {
-      return (
-        <div>
-          {this.renderLoggedIn()}
-        </div>
-      );
-    }
-
-    return (
-      <div>
-        {this.renderNotLoggedIn()}
-      </div>
-    );
+    return (user.loggedIn ? this.renderLoggedIn() : this.renderNotLoggedIn());
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    user: state.user,
-    categories: state.categories,
-  };
-}
+const mapStateToProps = state => ({
+  user: state.user,
+  categories: state.categories,
+});
 
 const mapDispatchToProps = {
   login,

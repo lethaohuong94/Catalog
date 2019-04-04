@@ -1,8 +1,10 @@
+/* eslint-disable react/button-has-type */
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { put } from '../../Helpers/fetchHelpers';
-import { showSuccessToast, showErrorToast, validateTextInput } from '../../Helpers/helpers';
+import { put } from '../../helpers/fetch';
+import { showSuccessToast, showErrorToast } from '../../helpers/toaster';
+import { validateTextInput } from '../../helpers/validators';
 
 class EditCategory extends Component {
   constructor(props) {
@@ -11,8 +13,10 @@ class EditCategory extends Component {
     if (this.props.category) this.state = { name: this.props.category.name };
   }
 
-  handleChangeName = (event) => {
-    this.setState({ name: event.target.value });
+  handleInputChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    this.setState({ [name]: value });
   }
 
   handleKeyPress = (event) => {
@@ -51,8 +55,8 @@ class EditCategory extends Component {
     return (
       <div className="form" onKeyPress={this.handleKeyPress}>
         <h5>Please fill the form</h5>
-        <input type="text" placeholder="New name" value={name} onChange={this.handleChangeName} />
-        <button type="submit" onClick={this.handleSubmit}> Save change </button>
+        <input type="text" placeholder="New name" value={name} name="name" onChange={this.handleInputChange} />
+        <button onClick={this.handleSubmit}> Save change </button>
       </div>
     );
   }

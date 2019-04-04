@@ -41,19 +41,10 @@ class Header extends Component {
 
   render() {
     const { user } = this.props;
-    if (user.loggedIn) {
-      return (
-        <div className="header">
-          {this.renderTitle()}
-          {this.renderLoggedIn()}
-        </div>
-      );
-    }
-
     return (
       <div className="header">
         {this.renderTitle()}
-        {this.renderNotLoggedIn()}
+        {user.loggedIn ? this.renderLoggedIn() : this.renderNotLoggedIn()}
       </div>
     );
   }

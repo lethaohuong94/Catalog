@@ -1,7 +1,9 @@
+import { LOG_IN, LOG_OUT } from './types';
+
 //user log in
 export function login(userInfo) {
   return {
-    type: 'LOG_IN',
+    type: LOG_IN,
     userInfo,
   };
 }
@@ -9,6 +11,6 @@ export function login(userInfo) {
 //user log out
 export function logout() {
   return {
-    type: 'LOG_OUT',
+    type: LOG_OUT,
   };
 }

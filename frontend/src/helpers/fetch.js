@@ -1,5 +1,5 @@
 import config from '../config';
-import { showErrorToast } from './helpers';
+import { showErrorToast } from './toaster';
 
 function createRequest(uri, method, accessToken = '', body = '') {
   const url = `${config.URL}${uri}`;

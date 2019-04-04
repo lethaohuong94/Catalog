@@ -4,8 +4,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';
-import { get } from '../../Helpers/fetchHelpers';
-import { updateCategories } from '../../Actions/categoryAction';
+import { get } from '../../helpers/fetch';
+import { updateCategories } from '../../actions/category';
 
 class Panel extends Component {
   componentDidMount() {
@@ -30,12 +30,10 @@ class Panel extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    user: state.user,
-    categories: state.categories,
-  };
-}
+const mapStateToProps = state => ({
+  user: state.user,
+  categories: state.categories,
+});
 
 const mapDispatchToProps = {
   updateCategories,
