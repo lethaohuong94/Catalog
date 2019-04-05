@@ -1,5 +1,5 @@
 import localStorage from 'local-storage';
-import { LOG_IN, LOG_OUT } from '../actions/types';
+import { LOG_IN, LOG_OUT } from '../constants/actionTypes';
 
 const defaultState = localStorage.get('user');
 

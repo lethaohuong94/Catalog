@@ -1,4 +1,4 @@
-import { LOG_IN, LOG_OUT } from './types';
+import { LOG_IN, LOG_OUT } from '../constants/actionTypes';
 
 //user log in
 export function login(userInfo) {

@@ -1,4 +1,4 @@
-import { UPDATE_CATEGORIES } from '../actions/types';
+import { UPDATE_CATEGORIES } from '../constants/actionTypes';
 
 function categories(state = [], action) {
   switch (action.type) {

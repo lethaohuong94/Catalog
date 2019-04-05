@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { UPDATE_CATEGORIES } from './types';
+import { UPDATE_CATEGORIES } from '../constants/actionTypes';
 
 //category update
 export function updateCategories(categories) {
