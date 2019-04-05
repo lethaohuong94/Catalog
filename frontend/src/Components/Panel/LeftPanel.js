@@ -1,22 +1,9 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 class LeftPanel extends Component {
-  visitingId = () => {
-    try {
-      const path = this.props.location.pathname;
-      const found1 = path.match(/\/category\/\d?/);
-      if (found1) {
-        const found2 = path.match(/\d+/);
-        return Number(found2.join());
-      }
-      return null;
-    } catch {
-      return null;
-    }
-  }
-
   renderButton() {
     return (
       <div className="button-container"><Link className="small-button" to="/category/new">Add Category</Link></div>
@@ -25,7 +12,7 @@ class LeftPanel extends Component {
 
   renderList() {
     const { categories } = this.props;
-    const visiting = this.visitingId();
+    const visiting = Number(this.props.match.params.categoryid);
     return (
       <ul>
         {categories.map(category => (
@@ -47,4 +34,8 @@ class LeftPanel extends Component {
   }
 }
 
-export default withRouter(LeftPanel);
+const mapStateToProps = state => ({
+  categories: state.categories,
+});
+
+export default withRouter(connect(mapStateToProps)(LeftPanel));

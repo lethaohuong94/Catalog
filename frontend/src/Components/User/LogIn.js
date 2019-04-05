@@ -1,8 +1,12 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+
 import { showSuccessToast, showErrorToast } from '../../helpers/toaster';
 import { validateTextInput } from '../../helpers/validators';
 import { post } from '../../helpers/fetch';
+import { login } from '../../actions/user';
 
 class LogIn extends Component {
   constructor(props) {
@@ -62,4 +66,12 @@ class LogIn extends Component {
   }
 }
 
-export default LogIn;
+const mapStateToProps = state => ({
+  user: state.user,
+});
+
+const mapDispatchToProps = {
+  login,
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LogIn));

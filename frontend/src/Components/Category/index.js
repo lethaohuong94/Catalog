@@ -18,33 +18,26 @@ class Category extends Component {
   }
 
   render() {
-    const { categories, user } = this.props;
-    const { loggedIn, userId, accessToken } = user;
+    const { loggedIn } = this.props;
     return (
       <div>
         <Switch>
           <Route path="/category/new" exact render={() => (
             loggedIn
               ? <AddCategory
-                accessToken={accessToken}
                 onRefetch={() => this.refetch()}
               />
               : <Redirect to="/login" />)}
           />
-          <Route path="/category/:id/edit" exact render={params => (
+          <Route path="/category/:categoryid/edit" exact render={() => (
             loggedIn
               ? <EditCategory
-                accessToken={accessToken}
-                category={categories.find(category => category.id === Number(params.match.params.id))}
                 onRefetch={() => this.refetch()}
               />
               : <Redirect to="/login" />)}
           />
-          <Route path="/category/:id" exact render={params => (
+          <Route path="/category/:categoryid" exact render={() => (
             <ViewCategory
-              accessToken={accessToken}
-              userId={userId}
-              category={categories.find(category => category.id === Number(params.match.params.id))}
               onRefetch={() => this.refetch()}
             />
           )}
@@ -58,7 +51,7 @@ class Category extends Component {
 
 function mapStateToProps(state) {
   return {
-    user: state.user,
+    loggedIn: state.user.loggedIn,
     categories: state.categories,
   };
 }

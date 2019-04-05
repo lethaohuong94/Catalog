@@ -1,6 +1,9 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+
+import { logout } from '../actions/user';
 
 class Header extends Component {
   handleLogout = () => {
@@ -18,14 +21,14 @@ class Header extends Component {
   }
 
   renderLoggedIn() {
-    const { user } = this.props;
+    const { userId } = this.props;
     return (
       <div className="button-container">
         <Link className="button" to="/changepassword">Change Password</Link>
         <button type="button" className="button" onClick={this.handleLogout}>
-              Log out
+          Log out
         </button>
-        <h5>{`user id: ${user.userId}`}</h5>
+        <h5>{`user id: ${userId}`}</h5>
       </div>
     );
   }
@@ -40,14 +43,23 @@ class Header extends Component {
   }
 
   render() {
-    const { user } = this.props;
+    const { loggedIn } = this.props;
     return (
       <div className="header">
         {this.renderTitle()}
-        {user.loggedIn ? this.renderLoggedIn() : this.renderNotLoggedIn()}
+        {loggedIn ? this.renderLoggedIn() : this.renderNotLoggedIn()}
       </div>
     );
   }
 }
 
-export default withRouter(Header);
+const mapStateToProps = state => ({
+  loggedIn: state.user.loggedIn,
+  userId: state.user.userId,
+});
+
+const mapDispatchToProps = {
+  logout,
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));

@@ -1,7 +1,9 @@
 /* eslint-disable react/button-has-type */
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+
 import { put } from '../../helpers/fetch';
 import { showSuccessToast, showErrorToast } from '../../helpers/toaster';
 import { validateTextInput } from '../../helpers/validators';
@@ -9,8 +11,14 @@ import { validateTextInput } from '../../helpers/validators';
 class EditCategory extends Component {
   constructor(props) {
     super(props);
-    this.state = { name: '' };
-    if (this.props.category) this.state = { name: this.props.category.name };
+    try {
+      this.categoryId = this.props.match.params.categoryid;
+      this.category = this.props.categories.find(category => category.id === Number(this.categoryId));
+      this.state = { name: this.category.name };
+    } catch {
+      this.state = { name: '' };
+      this.category = null;
+    }
   }
 
   handleInputChange = (event) => {
@@ -26,7 +34,7 @@ class EditCategory extends Component {
   }
 
   handleSubmit = () => {
-    const { accessToken, category, onRefetch, history } = this.props;
+    const { accessToken, onRefetch, history } = this.props;
     const { name } = this.state;
 
     try {
@@ -36,7 +44,7 @@ class EditCategory extends Component {
       return;
     }
 
-    put(`/categories/${category.id}`, { name }, accessToken)
+    put(`/categories/${this.category.id}`, { name }, accessToken)
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Category is successfully updated');
@@ -62,13 +70,21 @@ class EditCategory extends Component {
   }
 
   render() {
-    return (
-      <div>
-        {this.renderMessage()}
-        {this.renderForm()}
-      </div>
-    );
+    if (this.category) {
+      return (
+        <div>
+          {this.renderMessage()}
+          {this.renderForm()}
+        </div>
+      );
+    }
+    return (<Redirect to="/" />);
   }
 }
 
-export default withRouter(EditCategory);
+const mapStateToProps = state => ({
+  accessToken: state.user.accessToken,
+  categories: state.categories,
+});
+
+export default withRouter(connect(mapStateToProps)(EditCategory));

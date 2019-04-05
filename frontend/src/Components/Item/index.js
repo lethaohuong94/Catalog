@@ -12,45 +12,32 @@ import { updateCategories } from '../../actions/category';
 import { get } from '../../helpers/fetch';
 
 class Item extends Component {
-  //async does not allowed to be writen as arrow
   async refetch() {
     const categories = await get('/categories').then(json => json);
     this.props.updateCategories(categories);
   }
 
   render() {
-    const { categories, user } = this.props;
-    const { loggedIn, accessToken, userId } = user;
+    const { loggedIn } = this.props;
     return (
       <div>
         <Switch>
-          <Route path="/category/:categoryid/item/:itemid" exact render={params => (
+          <Route path="/category/:categoryid/item/:itemid" exact render={() => (
             <ViewItem
-              accessToken={accessToken}
-              userId={userId}
-              categoryId={params.match.params.categoryid}
-              itemId={params.match.params.itemid}
-              category={categories.find(category => category.id === Number(params.match.params.categoryid))}
               onRefetch={() => this.refetch()}
             />
           )}
           />
-          <Route path="/category/:categoryid/item" exact render={params => (
+          <Route path="/category/:categoryid/item" exact render={() => (
             loggedIn
               ? <AddItem
-                accessToken={accessToken}
-                categoryId={params.match.params.categoryid}
                 onRefetch={() => this.refetch()}
               />
               : <Redirect to="/login" />)}
           />
-          <Route path="/category/:categoryid/item/:itemid/edit" exact render={params => (
+          <Route path="/category/:categoryid/item/:itemid/edit" exact render={() => (
             loggedIn
               ? <EditItem
-                accessToken={accessToken}
-                categories={categories}
-                categoryId={params.match.params.categoryid}
-                itemId={params.match.params.itemid}
                 onRefetch={() => this.refetch()}
               />
               : <Redirect to="/login" />)}
@@ -63,7 +50,7 @@ class Item extends Component {
 }
 
 const mapStateToProps = state => ({
-  user: state.user,
+  loggedIn: state.user.loggedIn,
   categories: state.categories,
 });
 

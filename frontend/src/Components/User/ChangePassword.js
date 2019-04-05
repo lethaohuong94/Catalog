@@ -1,6 +1,8 @@
 /* eslint-disable react/button-has-type */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+
 import { showErrorToast, showSuccessToast } from '../../helpers/toaster';
 import { validateTextInput } from '../../helpers/validators';
 import { post, put } from '../../helpers/fetch';
@@ -67,4 +69,8 @@ class ChangePassword extends Component {
   }
 }
 
-export default withRouter(ChangePassword);
+const mapStateToProps = state => ({
+  user: state.user,
+});
+
+export default withRouter(connect(mapStateToProps)(ChangePassword));

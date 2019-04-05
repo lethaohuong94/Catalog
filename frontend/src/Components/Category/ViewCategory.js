@@ -1,14 +1,16 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { Link, Redirect, withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+
 import { del } from '../../helpers/fetch';
 import { showSuccessToast } from '../../helpers/toaster';
 
 class ViewCategory extends Component {
   handleDelete = () => {
-    const { accessToken, category, onRefetch, history } = this.props;
+    const { accessToken, onRefetch, history } = this.props;
 
-    del(`/categories/${category.id}`, accessToken)
+    del(`/categories/${this.category.id}`, accessToken)
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Category is successfully deleted');
@@ -18,32 +20,33 @@ class ViewCategory extends Component {
   }
 
   renderButtonField() {
-    const { category, userId } = this.props;
+    const { userId } = this.props;
     return (
       <div className="button-container">
-        {(userId === category.author_id) && <Link className="small-button" to={`/category/${category.id}/edit`}>Edit Category</Link>}
-        <Link className="small-button" to={`/category/${category.id}/item`}>Add Item</Link>
-        {(userId === category.author_id) && <button type="button" className="small-button" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this category?')) this.handleDelete(e); }}>delete category</button>}
+        {(userId === this.category.author_id) && <Link className="small-button" to={`/category/${this.category.id}/edit`}>Edit Category</Link>}
+        <Link className="small-button" to={`/category/${this.category.id}/item`}>Add Item</Link>
+        {(userId === this.category.author_id) && <button type="button" className="small-button" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this category?')) this.handleDelete(e); }}>delete category</button>}
       </div>
     );
   }
 
   renderItemList() {
-    const { category } = this.props;
     return (
       <div>
-        <h3>{`There are ${category.items.length} items in category ${category.name}`}</h3>
-        <h5>{`category's author: ${category.author_id}`}</h5>
+        <h3>{`There are ${this.category.items.length} items in category ${this.category.name}`}</h3>
+        <h5>{`category's author: ${this.category.author_id}`}</h5>
         <ul>
-          {category.items.map(item => <li key={item.id}><Link to={`/category/${category.id}/item/${item.id}`}>{item.name}</Link></li>)}
+          {this.category.items.map(item => <li key={item.id}><Link to={`/category/${this.category.id}/item/${item.id}`}>{item.name}</Link></li>)}
         </ul>
       </div>
     );
   }
 
   render() {
-    const { category } = this.props;
-    if (category) {
+    this.categoryId = this.props.match.params.categoryid;
+    this.category = this.props.categories.find(category => category.id === Number(this.categoryId));
+
+    if (this.category) {
       return (
         <div>
           {this.renderButtonField()}
@@ -59,4 +62,10 @@ class ViewCategory extends Component {
   }
 }
 
-export default withRouter(ViewCategory);
+const mapStateToProps = state => ({
+  accessToken: state.user.accessToken,
+  userId: state.user.userId,
+  categories: state.categories,
+});
+
+export default withRouter(connect(mapStateToProps)(ViewCategory));

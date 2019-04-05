@@ -1,6 +1,8 @@
 /* eslint-disable react/button-has-type */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+
 import { post } from '../../helpers/fetch';
 import { showSuccessToast, showErrorToast } from '../../helpers/toaster';
 import { validateTextInput } from '../../helpers/validators';
@@ -69,4 +71,8 @@ class AddCategory extends Component {
   }
 }
 
-export default withRouter(AddCategory);
+const mapStateToProps = state => ({
+  accessToken: state.user.accessToken,
+});
+
+export default withRouter(connect(mapStateToProps)(AddCategory));

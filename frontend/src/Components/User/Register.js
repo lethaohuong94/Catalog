@@ -1,8 +1,12 @@
 /* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+
 import { post } from '../../helpers/fetch';
 import { showErrorToast, showSuccessToast } from '../../helpers/toaster';
 import { validateTextInput } from '../../helpers/validators';
+import { login } from '../../actions/user';
 
 class Register extends Component {
   constructor(props) {
@@ -10,7 +14,7 @@ class Register extends Component {
     this.state = {};
   }
 
-  handleKeyPress(event) {
+  handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       this.handleSubmit(event);
     }
@@ -37,12 +41,12 @@ class Register extends Component {
     post('/users', { name, password })
       .then((response) => {
         if (!response.successful) return;
-        showSuccessToast('User created successfully');
         const userInfo = {
           userId: response.id,
           userName: name,
           accessToken: response.access_token,
         };
+        showSuccessToast('User created successfully');
         this.props.login(userInfo);
       });
   }
@@ -64,4 +68,12 @@ class Register extends Component {
   }
 }
 
-export default Register;
+const mapStateToProps = state => ({
+  user: state.user,
+});
+
+const mapDispatchToProps = {
+  login,
+};
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Register));

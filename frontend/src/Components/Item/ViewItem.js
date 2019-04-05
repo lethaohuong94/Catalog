@@ -1,28 +1,46 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable no-alert */
 import React, { Component } from 'react';
 import { Link, Redirect, withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+
 import { del } from '../../helpers/fetch';
 import { showSuccessToast } from '../../helpers/toaster';
 
 class ViewItem extends Component {
+  constructor(props) {
+    super(props);
+    try {
+      this.categoryId = this.props.match.params.categoryid;
+      this.itemId = this.props.match.params.itemid;
+
+      const { categories } = this.props;
+      this.category = categories.find(category => category.id === Number(this.categoryId));
+      this.item = this.category.items.find(item => item.id === Number(this.itemId));
+    } catch {
+      this.category = null;
+      this.item = null;
+    }
+  }
+
   handleDelete = () => {
     if (!(window.confirm('Are you sure you wish to delete this item?'))) return;
-    const { accessToken, category, itemId, onRefetch, history } = this.props;
+    const { accessToken, onRefetch, history } = this.props;
 
-    del(`/items/${itemId}`, accessToken)
+    del(`/items/${this.itemId}`, accessToken)
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Item is successfully deleted');
-        onRefetch().then(() => history.push(`/category/${category.id}`));
+        onRefetch().then(() => history.push(`/category/${this.category.id}`));
       });
   }
 
   renderButtonField(item) {
-    const { category, itemId, userId } = this.props;
+    const { userId } = this.props;
     if (userId === item.author_id) {
       return (
         <div className="button-container">
-          <Link className="small-button" to={`/category/${category.id}/item/${itemId}/edit`}>Edit Item</Link>
+          <Link className="small-button" to={`/category/${this.category.id}/item/${this.itemId}/edit`}>Edit Item</Link>
           <button type="button" className="small-button" onClick={this.handleDelete}>delete item</button>
         </div>
       );
@@ -41,17 +59,13 @@ class ViewItem extends Component {
   }
 
   render() {
-    const { category, itemId } = this.props;
-    if (category) {
-      const item = category.items.find(item => item.id === Number(itemId));
-      if (item) {
-        return (
-          <div>
-            {this.renderButtonField(item)}
-            {this.renderTextField(item)}
-          </div>
-        );
-      }
+    if (this.category && this.item) {
+      return (
+        <div>
+          {this.renderButtonField(this.item)}
+          {this.renderTextField(this.item)}
+        </div>
+      );
     }
     return (
       <div>
@@ -61,4 +75,10 @@ class ViewItem extends Component {
   }
 }
 
-export default withRouter(ViewItem);
+const mapStateToProps = state => ({
+  accessToken: state.user.accessToken,
+  userId: state.user.userId,
+  categories: state.categories,
+});
+
+export default withRouter(connect(mapStateToProps)(ViewItem));

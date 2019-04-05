@@ -1,6 +1,9 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/button-has-type */
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+
 import { put } from '../../helpers/fetch';
 import { showSuccessToast, showErrorToast } from '../../helpers/toaster';
 import { validateTextInput } from '../../helpers/validators';
@@ -9,12 +12,14 @@ class EditItem extends Component {
   constructor(props) {
     super(props);
     try {
-      const { categories, categoryId, itemId } = this.props;
-      this.category = categories.find(category => category.id === Number(categoryId));
-      this.item = this.category.items.find(item => item.id === Number(itemId));
+      const { categories } = this.props;
+      this.categoryId = this.props.match.params.categoryid;
+      this.itemId = this.props.match.params.itemid;
+      this.category = categories.find(category => category.id === Number(this.categoryId));
+      this.item = this.category.items.find(item => item.id === Number(this.itemId));
 
       const { name, description } = this.item;
-      this.state = { name, description, categoryId };
+      this.state = { name, description, categoryId: this.categoryId };
     } catch {
       this.state = {};
     }
@@ -33,7 +38,7 @@ class EditItem extends Component {
   }
 
   handleSubmit = () => {
-    const { accessToken, itemId, onRefetch, history } = this.props;
+    const { accessToken, onRefetch, history } = this.props;
     const { name, description, categoryId } = this.state;
 
     try {
@@ -44,7 +49,7 @@ class EditItem extends Component {
       return;
     }
 
-    put(`/categories/${categoryId}/items/${itemId}`, { name, description }, accessToken)
+    put(`/categories/${categoryId}/items/${this.itemId}`, { name, description }, accessToken)
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Item is successfully updated');
@@ -84,4 +89,9 @@ class EditItem extends Component {
   }
 }
 
-export default withRouter(EditItem);
+const mapStateToProps = state => ({
+  accessToken: state.user.accessToken,
+  categories: state.categories,
+});
+
+export default withRouter(connect(mapStateToProps)(EditItem));

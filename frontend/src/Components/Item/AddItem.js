@@ -1,6 +1,9 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/button-has-type */
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+
 import { post } from '../../helpers/fetch';
 import { showSuccessToast, showErrorToast } from '../../helpers/toaster';
 import { validateTextInput } from '../../helpers/validators';
@@ -9,6 +12,12 @@ class AddItem extends Component {
   constructor(props) {
     super(props);
     this.state = { name: '', description: '' };
+    try {
+      this.categoryId = this.props.match.params.categoryid;
+      this.category = this.props.categories.find(category => category.id === Number(this.categoryId));
+    } catch {
+      this.category = null;
+    }
   }
 
   handleInputChange = (event) => {
@@ -24,7 +33,7 @@ class AddItem extends Component {
   }
 
   handleSubmit = () => {
-    const { accessToken, categoryId, onRefetch, history } = this.props;
+    const { accessToken, onRefetch, history } = this.props;
     const { name, description } = this.state;
 
     try {
@@ -35,11 +44,11 @@ class AddItem extends Component {
       return;
     }
 
-    post(`/categories/${categoryId}/items`, { name, description }, accessToken)
+    post(`/categories/${this.categoryId}/items`, { name, description }, accessToken)
       .then((response) => {
         if (!response.successful) return;
         showSuccessToast('Item is successfully created');
-        onRefetch().then(() => history.push(`/category/${categoryId}`));
+        onRefetch().then(() => history.push(`/category/${this.categoryId}`));
       });
   }
 
@@ -61,13 +70,21 @@ class AddItem extends Component {
   }
 
   render() {
-    return (
-      <div>
-        {this.renderMessage()}
-        {this.renderForm()}
-      </div>
-    );
+    if (this.category) {
+      return (
+        <div>
+          {this.renderMessage()}
+          {this.renderForm()}
+        </div>
+      );
+    }
+    return <Redirect to="/" />;
   }
 }
 
-export default withRouter(AddItem);
+const mapStateToProps = state => ({
+  accessToken: state.user.accessToken,
+  categories: state.categories,
+});
+
+export default withRouter(connect(mapStateToProps)(AddItem));
