@@ -28,9 +28,14 @@ class App extends Component {
         <Switch>
           <Route path="/register" exact render={() => <Redirect to="/" />} />
           <Route path="/login" exact render={() => <Redirect to="/" />} />
-          <Route path="/changepassword" exact render={() => <ChangePassword />} />
-          <Route path="/category/:categoryid" render={() => <Panel />} />
-          <Route render={() => <Panel />} />
+          <Route path="/changepassword" exact component={ChangePassword} />
+
+          <Route path="/category/:categoryid" component={Panel} />
+
+          <Route path="/category/" component={Panel} />
+          <Route path="/category/:categoryid/item/" component={Panel} />
+
+          <Route component={Panel} />
         </Switch>
       </div>
     );
@@ -41,11 +46,15 @@ class App extends Component {
       <div>
         <Header />
         <Switch>
-          <Route path="/register" exact render={() => <Register />} />
-          <Route path="/login" exact render={() => <LogIn />} />
+          <Route path="/register" exact component={Register} />
+          <Route path="/login" exact component={LogIn} />
           <Route path="/changepassword" exact render={() => <Redirect to="/login" />} />
-          <Route path="/category/:categoryid" render={() => <Panel />} />
-          <Route render={() => <Panel />} />
+
+          <Route path="/category/:categoryid" component={Panel} />
+          <Route path="/category/:categoryid/item/" component={Panel} />
+          <Route path="/category/" component={Panel} />
+
+          <Route component={Panel} />
         </Switch>
       </div>
     );

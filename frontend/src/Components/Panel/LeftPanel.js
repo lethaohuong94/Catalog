@@ -12,11 +12,11 @@ class LeftPanel extends Component {
 
   renderList() {
     const { categories } = this.props;
-    const visiting = Number(this.props.match.params.categoryid);
+    const visitingId = Number(this.props.match.params.categoryid);
     return (
       <ul>
         {categories.map(category => (
-          <li key={category.id} style={{ background: (category.id === visiting ? '#0658845e' : null) }}>
+          <li key={category.id} style={{ background: (category.id === visitingId ? '#0658845e' : null) }}>
             <Link to={`/category/${category.id}`} key={category.id} className="category">{category.name}</Link>
           </li>
         ))}

@@ -12,7 +12,7 @@ import { updateCategories } from '../../actions/category';
 import { get } from '../../helpers/fetch';
 
 class Item extends Component {
-  async refetch() {
+  refetch = async () => {
     const categories = await get('/categories').then(json => json);
     this.props.updateCategories(categories);
   }
@@ -24,25 +24,25 @@ class Item extends Component {
         <Switch>
           <Route path="/category/:categoryid/item/:itemid" exact render={() => (
             <ViewItem
-              onRefetch={() => this.refetch()}
+              onRefetch={this.refetch}
             />
           )}
           />
           <Route path="/category/:categoryid/item" exact render={() => (
             loggedIn
               ? <AddItem
-                onRefetch={() => this.refetch()}
+                onRefetch={this.refetch}
               />
               : <Redirect to="/login" />)}
           />
           <Route path="/category/:categoryid/item/:itemid/edit" exact render={() => (
             loggedIn
               ? <EditItem
-                onRefetch={() => this.refetch()}
+                onRefetch={this.refetch}
               />
               : <Redirect to="/login" />)}
           />
-          <Route render={() => <Redirect to="/" />} />
+          <Redirect to="/" />
         </Switch>
       </div>
     );

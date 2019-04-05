@@ -12,7 +12,8 @@ import { updateCategories } from '../../actions/category';
 import { get } from '../../helpers/fetch';
 
 class Category extends Component {
-  async refetch() {
+  refetch = async () => {
+    //can fetch in reducer
     const categories = await get('/categories').then(json => json);
     this.props.updateCategories(categories);
   }
@@ -25,24 +26,24 @@ class Category extends Component {
           <Route path="/category/new" exact render={() => (
             loggedIn
               ? <AddCategory
-                onRefetch={() => this.refetch()}
+                onRefetch={this.refetch}
               />
               : <Redirect to="/login" />)}
           />
           <Route path="/category/:categoryid/edit" exact render={() => (
             loggedIn
               ? <EditCategory
-                onRefetch={() => this.refetch()}
+                onRefetch={this.refetch}
               />
               : <Redirect to="/login" />)}
           />
           <Route path="/category/:categoryid" exact render={() => (
             <ViewCategory
-              onRefetch={() => this.refetch()}
+              onRefetch={this.refetch}
             />
           )}
           />
-          <Route render={() => <Redirect to="/" />} />
+          <Redirect to="/" />
         </Switch>
       </div>
     );

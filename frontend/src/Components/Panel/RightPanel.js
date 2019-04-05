@@ -8,8 +8,8 @@ class RightPanel extends Component {
     return (
       <div className="right-panel">
         <Switch>
-          <Route path="/category/:categoryid/item/" render={() => <Item />} />
-          <Route path="/category/" render={() => <Category />} />
+          <Route path="/category/:categoryid/item/" component={Item} />
+          <Route path="/category/" component={Category} />
           <Route render={() => <h3>Welcome to Catalog App</h3>} />
         </Switch>
       </div>
